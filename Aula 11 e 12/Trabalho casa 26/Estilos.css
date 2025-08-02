@@ -1,0 +1,37 @@
+    body {
+
+background-color: rgb(236, 233, 229);
+    }
+header {
+padding: 40px;
+background-color: rgb(0, 114, 15);
+border-radius: 4px;
+color: rgb(0, 0, 0);
+text-align: center;
+
+
+}
+main {
+
+background-color: rgb(208, 218, 209);
+border-radius: 4px;
+height: 700px;
+margin-top:10px;
+
+}
+
+footer {
+
+background-color: rgb(165, 192, 170);
+            text-align: center;
+            height: 40px;
+            margin-top: -40px;
+            border-radius: 4px;
+           
+        
+
+        
+
+
+
+}
