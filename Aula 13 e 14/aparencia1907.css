@@ -1,0 +1,69 @@
+* {
+    margin: 0px;
+    padding: 0px;
+}
+
+header {
+    height: 160px;
+    width: 100%;
+    background-color: rgb(22, 89, 191);
+}
+
+nav {
+    height: 30px;
+    width: 100%;
+    background-color: rgb(15, 64, 152);
+}
+
+
+#asideesquerda {
+    width: 470px;
+    background-color: rgb(97, 39, 39);
+    height: 750px;
+    
+    
+}
+
+
+
+#asidedireita {
+    width: 470px;
+    background-color:rgb(32, 56, 41);
+    height: 750px;
+    margin-top: -750px;
+    margin-left: 1420px;
+    
+}
+
+#icentro {
+    width: 950px;
+    height: 750px;
+    background-color: yellow;
+    margin-left: 470px;
+    margin-top: -750px;
+
+}
+#ititulo{
+color: white;
+width: 470px;
+margin-left: 470px;
+
+}
+
+a{
+    color: white;
+
+}
+#iinput{
+margin-left: 1427px;
+margin-top: -30px;
+}
+
+#iimagem{
+    width: 950px;
+    height: 750px;
+}
+#inav{
+    width: 350px ;
+    margin-left: 1110px;
+}

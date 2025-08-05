@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Par ou Ímpar</title>
+  </head>
+  <body>
+    <script>
+      // Pedir um número ao usuário
+      let numero = prompt("Digite um número:");
+
+      // Converter o valor para número (prompt retorna texto)
+      numero = Number(numero);
+
+      // Verificar se o número é par usando o operador %
+      if (numero % 2 === 0) {
+        // Se o resto da divisão por 2 for 0, é par
+        console.log("O número " + numero + " é PAR.");
+      } else {
+        // Se não, é ímpar
+        console.log("O número " + numero + " é ÍMPAR.");
+      }
+    </script>
+  </body>
+</html>
