@@ -1,19 +1,29 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Média de Notas</title>
+    <title>Operações</title>
   </head>
   <body>
     <script>
-      let nota1 = prompt("Digite a primeira nota:");
-      let nota2 = prompt("Digite a segunda nota:");
+      // Pedir dois números ao usuário
+      let numero1 = prompt("Digite o primeiro número:");
+      let numero2 = prompt("Digite o segundo número:");
 
-      nota1 = Number(nota1);
-      nota2 = Number(nota2);
+      // Converter os textos para números
+      numero1 = Number(numero1);
+      numero2 = Number(numero2);
 
-      let media = (nota1 + nota2) / 2;
+      // Fazer as operações
+      let soma = numero1 + numero2;
+      let subtracao = numero1 - numero2;
+      let multiplicacao = numero1 * numero2;
+      let divisao = numero1 / numero2;
 
-      console.log("A média das notas é: " + media);
+      // Mostrar os resultados no console
+      console.log("Soma: " + soma);
+      console.log("Subtração: " + subtracao);
+      console.log("Multiplicação: " + multiplicacao);
+      console.log("Divisão: " + divisao);
     </script>
   </body>
 </html>

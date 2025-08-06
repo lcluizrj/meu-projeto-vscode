@@ -1,16 +1,20 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Idade em Dias</title>
+    <title>Ex 2 - Multiplicação</title>
   </head>
   <body>
     <script>
-      let idade = prompt("Quantos anos você tem?");
-      idade = Number(idade);
+      let nome = prompt("Qual seu nome?");
+      let numero1 = prompt("Digite o primeiro número:");
+      let numero2 = prompt("Digite o segundo número:");
 
-      let dias = idade * 365;
+      numero1 = Number(numero1);
+      numero2 = Number(numero2);
 
-      console.log("Você viveu aproximadamente " + dias + " dias.");
+      let resultado = numero1 * numero2;
+
+      console.log(nome + ", o resultado da multiplicação é: " + resultado);
     </script>
   </body>
 </html>
