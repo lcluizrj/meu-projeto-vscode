@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        html,
+        body {
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        input{
+            text-align: center;
+        }
+        input:hover {
+            transform: scale(1.05); 
+   
+ 
+        }
+
+        header {
+            background-color: #1e4fa3;
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .header-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            
+        }
+
+        .titulo h1,
+        .titulo h4 {
+            margin: 0;
+        }
+
+
+
+        section {
+            border: solid #afafaf;
+            display: flex;
+            flex: 1;
+            /* ocupa o espaço restante automaticamente */
+        }
+
+        nav {
+            border: solid #afafaf;
+            width: 15%;
+            height: 100%;
+            background-color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            /* Centraliza horizontalmente */
+            align-items: center;
+            /* Centraliza verticalmente (se tiver altura) */
+            flex-direction: column;
+            /* Empilha os botões verticalmente */
+            gap: 1px;
+            /* Espaço entre os botões */
+            border-top: none;
+
+        }
+
+        main {
+            width: 80%;
+            height: 80%;
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            padding: 20px;
+    
+        }
+        button:hover{
+            border: 1px solid;
+            border-radius: 5px;
+            background-color: #1e4fa3;
+            color: white;
+            transform: scale(1.1);
+        }
+
+
+
+        button {
+            height: 45px;
+            width: 80%;
+            border-radius: 10% rgb(191, 192, 194);
+
+        }
+        #LogoF:hover {
+            transform: scale(1.2);
+            background-color: #1e4fa3;
+        }
+
+        #LogoF {
+            width: 80px;
+            height: 80px;
+            line-height: 80px;
+            text-align: center;
+            border-radius: 15%;
+            font-size: 60px;
+            background-color: #1e4fa3;
+            color: rgb(0, 0, 0);
+            margin: 0 auto 10px auto;
+            border: 2px solid #1e4fa3;
+        }
+        #LogoFTit:hover {
+            transform: scale(1.2);
+            background-color: #0b2f6b;
+
+        }
+
+        #LogoFTit {
+            width: 80px;
+            height: 80px;
+            line-height: 80px;
+            text-align: center;
+            border-radius: 15%;
+            font-size: 60px;
+            background-color: #0b2f6b;
+            color: rgb(0, 0, 0);
+            border: 2px solid #1e4fa3;
+        }
+
+        #areaEx {
+            text-align: center;
+        }
+       .ibuttontela:hover {
+           border: 1px solid;
+           border-radius: 5px;
+           background-color: #1e4fa3;
+           color: white;
+        
+        }
+        .ibuttontela {
+           width: 29%;
+           height: 25px;
+
+        }
+        #ifoto {
+            width: 60%;
+            text-align: center  ;
+            display: block;
+            margin: 0 auto;
+        }
+        .divborda {
+            border: solid rgb(191, 192, 194);
+            border-radius: 10px;
+            width: 40%;
+            flex-direction: column;
+            text-align: center;
+            padding: 10px;
+            margin-left: 300px;
+            background: rgb(191, 192, 194);
+           
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="header-container">
+            <div id="LogoFTit">
+                F
+            </div>
+            <div class="titulo">
+                <h1> Escola First</h1>
+                <h4>Portal Exercícios</h4>
+            </div>
+        </div>
+
+    </header>
+    <section>
+        <nav>
+            <div id="areaEx">
+                <br>
+                <div id="LogoF">
+                    F
+                </div>
+                <H3>Escola First</H3>
+                <P> Área Pratica e Exercícios </P>
+
+            </div>
+            <button onclick="mostrar('operacoes')">Soma / Subtração / Multiplicação / Divisão</button><BR>
+            <button onclick="mostrar('media')">Média de 4 notas (0–100)</button><BR>
+            <button onclick="mostrar('retangulo')">Perímetro do Retângulo</button><BR>
+            <button onclick="mostrar('circulo')">Área do Círculo</button><BR>
+            <button onclick="mostrar('nome')">Nome Completo</button><BR>
+            <button onclick="mostrar('maior')">Maior entre 4 números</button><BR>
+            <button onclick="mostrar('menor')">Menor entre 5 números</button><BR>
+            <button onclick="mostrar('tabuada')">Tabuada</button><BR>
+            <button onclick="mostrar('calcularParalelepipedo')">Volume do Paralelepípedo</button><BR>
+            <button onclick="mostrar('esfera')">Volume da Esfera</button><BR>
+            <button onclick="mostrar('idade')">Calcular Idade</button><BR>
+            <button onclick="mostrar('primo')">Verificar Número Primo</button><BR>
+            <button onclick="mostrar('mes')">Mês por número (1–12)</button><BR>
+            <button onclick="mostrar('contracheque')">Contracheque</button><BR>
+        </nav>
+
+        <main id="conteudo">
+            <img src="logof.png" alt="" id="ifoto">
+
+        </main>
+    </section>
+
+
+    <script>
+        function somar() {
+            let valor1 = document.getElementById("ivalor1").value;
+            let valor2 = document.getElementById("ivalor2").value;
+            let resultado = parseInt(valor1) + parseInt(valor2);
+            document.getElementById("iresult").value = resultado;
+        }
+        function subtrair() {
+            let valor1 = document.getElementById("ivalor1").value;
+            let valor2 = document.getElementById("ivalor2").value;
+            let resultado = parseInt(valor1) - parseInt(valor2);
+            document.getElementById("iresult").value = resultado;
+        }
+        function multiplicar() {
+            let valor1 = document.getElementById("ivalor1").value;
+            let valor2 = document.getElementById("ivalor2").value;
+            let resultado = parseInt(valor1) * parseInt(valor2);
+            document.getElementById("iresult").value = resultado;
+        }
+        function dividir() {
+            let valor1 = document.getElementById("ivalor1").value;
+            let valor2 = document.getElementById("ivalor2").value;
+            let resultado = parseInt(valor1) / parseInt(valor2);
+            document.getElementById("iresult").value = resultado;
+        }
+        function media() {
+            let n1 = parseFloat(document.getElementById("n1").value);
+            let n2 = parseFloat(document.getElementById("n2").value);
+            let n3 = parseFloat(document.getElementById("n3").value);
+            let n4 = parseFloat(document.getElementById("n4").value);
+            let resultado = (n1 + n2 + n3 + n4) / 4;
+            document.getElementById("iresultadoMedia").value = resultado.toFixed(2);
+        }
+        function calcularRetangulo() {
+            let largura = Number(document.getElementById("largura").value);
+            let altura = Number(document.getElementById("altura").value);
+
+            let perimetro = 2 * (largura + altura);
+
+            document.getElementById("iresultadoRetangulo").value = perimetro;
+        }
+        function calcularAreaCirculo() {
+            let raio = parseFloat(document.getElementById("icirculo").value);
+            if (isNaN(raio)) {
+                alert("Digite um valor válido para o raio.");
+                return;
+            }
+            let area = Math.PI * raio * raio;
+            document.getElementById("iresultadoraio").value = area;
+        }
+
+        function operacao(sinal) {
+            let n1 = parseFloat(document.getElementById("n1").value);
+            let n2 = parseFloat(document.getElementById("n2").value);
+            let resultado;
+
+            if (isNaN(n1) || isNaN(n2)) {
+                alert("Digite dois números válidos!");
+                return;
+            }
+
+            switch (sinal) {
+                case '+':
+                    resultado = n1 + n2;
+                    break;
+                case '-':
+                    resultado = n1 - n2;
+                    break;
+                case '*':
+                    resultado = n1 * n2;
+                    break;
+                case '/':
+                    if (n2 === 0) {
+                        alert("Divisão por zero não é permitida!");
+                        return;
+                    }
+                    resultado = n1 / n2;
+                    break;
+            }
+
+            document.getElementById("resultado").value = resultado;
+        }
+        function nome() {
+            let nome = document.getElementById("iname").value;
+            let sobrenome = document.getElementById("isobrenome").value;
+
+            let completo = nome + " " + sobrenome;
+
+            document.getElementById("resultado").innerHTML =
+                '<p>Seu nome completo é: <strong>' + completo + ' </strong></p>';
+        }
+        function maior() {
+            let n1 = Number(document.getElementById("im1").value);
+            let n2 = Number(document.getElementById("im2").value);
+            let n3 = Number(document.getElementById("im3").value);
+            let n4 = Number(document.getElementById("im4").value);
+            let maior;
+            if (n1 >= n2 && n1 >= n3 && n1 >= n4) {
+                maior = n1;
+            } else {
+                if (n2 >= n1 && n2 >= n3 && n2 >= n4) {
+                    maior = n2;
+                } else {
+                    if (n3 >= n1 && n3 >= n2 && n3 >= n4) {
+                        maior = n3;
+                    } else {
+                        maior = n4;
+
+                    }
+                }
+            }
+            document.getElementById("iresultado").value = maior;
+
+        }
+        function menor() {
+            let n1 = Number(document.getElementById("imenor1").value);
+            let n2 = Number(document.getElementById("imenor2").value);
+            let n3 = Number(document.getElementById("imenor3").value);
+            let n4 = Number(document.getElementById("imenor4").value);
+            let n5 = Number(document.getElementById("imenor5").value);
+            let menor;
+            if (n1 <= n2 && n1 <= n3 && n1 <= n4 && n1 <= n5) {
+                menor = n1;
+            } else {
+                if (n2 <= n1 && n2 <= n3 && n2 <= n4 && n2 <= n5) {
+                    menor = n2;
+                } else {
+                    if (n3 <= n1 && n3 <= n2 && n3 <= n4 && n3 <= n5) {
+                        menor = n3;
+                    } else
+                        if (n4 <= n1 && n4 <= n2 && n4 <= n3 && n4 <= n5) {
+
+                        } else {
+                            menor = n5
+                        }
+                }
+            }
+            document.getElementById("iresultado").value = menor;
+        }
+        function tabuada() {
+            let num = Number(document.getElementById("itabuada").value);
+            let res = document.getElementById("iresultado");
+
+        
+            if (isNaN(num) || num === "") {
+                res.innerHTML = "Digite um número válido!";
+                return;
+            }
+
+            res.innerHTML = ""; 
+
+            for (let i = 1; i <= 10; i++) {
+                res.innerHTML += "Resultado é " + num + " x " + i + " = " + (num * i) + "<br>";
+            }
+        }
+        function calcularParalelepipedo() {
+            let comprimento = Number(document.getElementById("icomp").value);
+            let largura = Number(document.getElementById("ilarg").value);
+            let altura = Number(document.getElementById("ialt").value);
+            let volume = comprimento * largura * altura;
+            document.getElementById("iresultadoParalelepipedo").value = volume;
+        }
+        function calcularVolumeEsfera() {
+            let raio = Number(document.getElementById("iraio").value);
+
+            if (raio <= 0) {
+                document.getElementById("iresultadoEsfera").value = "Digite um valor válido (>0)";
+                return;
+            }
+
+            let volume = (4 / 3) * Math.PI * Math.pow(raio, 3);
+            document.getElementById("iresultadoEsfera").value = volume.toFixed(2);
+        }
+        function idade() {
+            let diaNasc = document.getElementById("idiaNasc").value;
+            let mesNasc = document.getElementById("imesNasc").value;
+            let anoNasc = document.getElementById("ianoNasc").value;
+            let diaAtual = document.getElementById("idiaAtual").value;
+            let mesAtual = document.getElementById("imesAtual").value;
+            let anoAtual = document.getElementById("ianoAtual").value;
+
+            if (diaNasc == "" || mesNasc == "" || anoNasc == "" || diaAtual == "" || mesAtual == "" || anoAtual == "") {
+                document.getElementById("iresultado").value = "Preencha todos os campos";
+                return;
+            }
+            let idade = anoAtual - anoNasc;
+            if (mesAtual < mesNasc || (mesAtual == mesNasc && diaAtual < diaNasc)) {
+                idade = idade - 1;
+            }
+            document.getElementById("iresultado").value = idade + " anos";
+        }
+        function primo() {
+            let numero = document.getElementById("inumero").value;
+            let resultado = document.getElementById("iresultado");
+
+            if (numero == "") {
+                resultado.value = "Digite um número";
+                return;
+            }
+
+            numero = parseInt(numero);
+
+            if (numero <= 1) {
+                resultado.value = "Não é primo";
+                return;
+            }
+
+            let divisores = 0;
+
+            for (let i = 1; i <= numero; i++) {
+                if (numero % i == 0) {
+                    divisores = divisores + 1;
+                }
+            }
+
+            if (divisores == 2) {
+                resultado.value = "É primo";
+            } else {
+                resultado.value = "Não é primo";
+            }
+        }
+        function mes() {
+            let numero = parseInt(document.getElementById("inumero").value);
+            let resultado = document.getElementById("iresultado");
+
+            switch (numero) {
+                case 1:
+                    resultado.value = "Janeiro";
+                    break;
+                case 2:
+                    resultado.value = "Fevereiro";
+                    break;
+                case 3:
+                    resultado.value = "Março";
+                    break;
+                case 4:
+                    resultado.value = "Abril";
+                    break;
+                case 5:
+                    resultado.value = "Maio";
+                    break;
+                case 6:
+                    resultado.value = "Junho";
+                    break;
+                case 7:
+                    resultado.value = "Julho";
+                    break;
+                case 8:
+                    resultado.value = "Agosto";
+                    break;
+                case 9:
+                    resultado.value = "Setembro";
+                    break;
+                case 10:
+                    resultado.value = "Outubro";
+                    break;
+                case 11:
+                    resultado.value = "Novembro";
+                    break;
+                case 12:
+                    resultado.value = "Dezembro";
+                    break;
+                default:
+                    resultado.value = "NaN! Digite de 1 a 12.";
+            }
+        }
+        function contracheque() {
+            let salarioBruto = document.getElementById("isalarioBruto").value;
+
+            if (salarioBruto == "" || salarioBruto <= 0) {
+                document.getElementById("iliquido").value = "Digite um valor válido";
+                return;
+            }
+
+            salarioBruto = parseFloat(salarioBruto);
+
+            let inss = salarioBruto * 0.04;
+            let salarioFamilia = salarioBruto * 0.015;
+            let valeTransporte = salarioBruto * 0.03;
+            let fgts = salarioBruto * 0.025;
+
+            let liquido = salarioBruto - (inss + salarioFamilia + valeTransporte + fgts);
+
+            document.getElementById("iinss").value = "INSS: R$ " + inss.toFixed(2);
+            document.getElementById("isalarioFamilia").value = "Salário Família: R$ " + salarioFamilia.toFixed(2);
+            document.getElementById("ivaleTransporte").value = "Vale Transporte: R$ " + valeTransporte.toFixed(2);
+            document.getElementById("ifgts").value = "FGTS: R$ " + fgts.toFixed(2);
+            document.getElementById("iliquido").value = "R$ " + liquido.toFixed(2);
+        }
+
+
+
+
+        function mostrar(pagina) {
+            let main = document.getElementById("conteudo");
+
+            if (pagina === "operacoes") {
+                main.innerHTML = `
+            <div class=divborda>
+                <h3> Operações Basicas </h3>
+                <label for="ivalor1">1° valor:</label>
+                <input type="number" id="ivalor1" ><br>
+                <label for="ivalor2">2° valor:</label>
+                <input type="number" id="ivalor2" ><br><br>
+
+                <button onclick="somar()" class="ibuttontela">Somar</button><br>
+                <button onclick="subtrair()" class="ibuttontela">Subtrair</button><br>
+                <button onclick="multiplicar()" class="ibuttontela">Multiplicar</button><br>
+                <button onclick="dividir()" class="ibuttontela">Dividir</button><br><br>
+
+                <label>Resultado:</label>
+                <input type="text" id="iresult" readonly>
+            </div>
+        `;
+            }
+
+            else if (pagina === "media") {
+                main.innerHTML = `
+            <div class=divborda>
+                <h3>Média de 4 Notas</h3>
+                <input type="number" id="n1" placeholder="Nota 1"><br>
+                <input type="number" id="n2" placeholder="Nota 2"><br>
+                <input type="number" id="n3" placeholder="Nota 3"><br>
+                <input type="number" id="n4" placeholder="Nota 4"><br><br>
+                <button onclick="media()" class="ibuttontela">Calcular Média</button><br><br>
+                <label>Média:</label>
+                <input type="text" id="iresultadoMedia" readonly>
+            </div>
+        `;
+            }
+
+            else if (pagina === "retangulo") {
+                main.innerHTML = `
+            <div class=divborda>
+                <h3>Perimetro do Retangulo</h3>
+                <label for="base">Largura:</label>
+                <input type="number" id="largura"><br>
+                <label for="altura">Altura:</label>
+                <input type="number" id="altura"><br><br>
+                <button onclick="calcularRetangulo()" class="ibuttontela">Calcular perimetro</button><br><br>
+                <label>Perimetro:</label>
+                <input type="text" id="iresultadoRetangulo" readonly>
+            </div>`;
+            }
+            else if (pagina === "circulo") {
+                main.innerHTML = `
+            <div class=divborda>
+                <h3> Área do Circulo </h3>
+                <label for="icirculo"> Raio Circulo:</label> 
+                <input type = "number" id = icirculo><br><br>
+                <button onclick="calcularAreaCirculo()" class="ibuttontela"> Calcular Raio </button><br><br>
+                <label> Raio:</label>
+                <input type ="text" id="iresultadoraio" readonly>
+            </div>`;
+            }
+            else if (pagina === "nome") {
+                main.innerHTML = ` 
+            <div class=divborda> <br>
+                <h3> Imprima seu nome </h3>
+                <label  for="">Nome:</label>
+                <input  type="text" id="iname"><br><br>
+                <label  for="" >Sobrenome:</label>
+                <input  type="text" id="isobrenome"><br><br>
+                <button onclick="nome()" class="ibuttontela"> Imprima seu nome</button>
+                <p id="resultado"></p>
+                
+                
+                
+
+            </div>`;
+
+            }
+            else if (pagina === "maior") {
+                main.innerHTML = `
+            <div class=divborda>
+                <h3>Maior Entre 4 Números</h3>
+                <input type="number" value="" id="im1" placeholder="Digite Primeiro Numero"><br>
+                <input type="number" value="" id="im2" placeholder="Digite Segundo Numero"><br>
+                <input type="number" value="" id="im3" placeholder="Digite Terceiro Numero"><br>
+                <input type="number" value="" id="im4" placeholder="Digite Quarto Numero"><br><br>
+                
+                <button onclick="maior()" class="ibuttontela"> Clique aqui. </button><br><br>
+                <label for="">Resultado:
+                </label>
+                <input type="number" id="iresultado">
+            </div>`;
+
+            }
+            else if (pagina === "menor") {
+                main.innerHTML = `
+            <div class=divborda>
+                <h3>Menor Entre 5 Números</h3>
+                <input type="number" value="" id="imenor1" placeholder="Digite Primeiro Numero"><br>
+                <input type="number" value="" id="imenor2" placeholder="Digite Segundo Numero"><br>
+                <input type="number" value="" id="imenor3" placeholder="Digite Terceiro Numero"><br>
+                <input type="number" value="" id="imenor4" placeholder="Digite Quarto Numero"><br>
+                <input type="number" value="" id="imenor5" placeholder="Digite Quinto Numero"><br><br>
+                
+                <button onclick="menor()" class="ibuttontela"> Clique aqui. </button><br><br>
+                <label for="">Resultado:
+                </label>
+                <input type="number" id="iresultado">
+            </div>`;
+
+            }
+            else if (pagina === "tabuada") {
+                main.innerHTML = `
+            <div class=divborda>
+                <br>
+                <h3> Tabuada Multiplicação</h3><br>
+                <Label>Digite o valor:</Label>
+                <input type="number" id="itabuada"><br><br>
+                <button onclick="tabuada()" class="ibuttontela">Imprimir Tabuada</button><br>
+                <p id="iresultado"></p>
+
+            </div>`;
+
+            }
+            else if (pagina === "calcularParalelepipedo") {
+                main.innerHTML = `
+            <div class=divborda> <br>
+                <h3>Volume do Paralelepípedo</h3>
+                <label for="icomp">Comprimento:</label>
+                <input type="number" id="icomp" ><br>
+                <label for="ilarg">Largura:</label>
+                <input type="number" id="ilarg" ><br>
+                <label for="ialt">Altura:</label>
+                <input type="number" id="ialt" ><br><br>
+                <button onclick="calcularParalelepipedo()" class="ibuttontela">Calcular Volume</button><br><br>
+                <label>Volume:</label>
+                <input type="text" id="iresultadoParalelepipedo" readonly>
+    
+            </div>`;
+
+            }
+            else if (pagina === "esfera") {
+                main.innerHTML = `
+            <div class=divborda>
+                <h3>Volume da Esfera</h3>
+                <label for="iraio">Raio:</label>
+                <input type="number" id="iraio" step="any"><br><br>
+                <button onclick="calcularVolumeEsfera()" class="ibuttontela">Calcular Volume</button><br><br>
+                <label>Volume:</label>
+                <input type="text" id="iresultadoEsfera" readonly>
+
+           </div>`;
+            }
+            else if (pagina === "idade") {
+                main.innerHTML = ` 
+            <div class=divborda>
+                <h3>Calcular Idade</h3>
+                <label>Dia de nascimento:</label><br>
+                <input type="number" id="idiaNasc"><br><br>
+
+                <label>Mês de nascimento:</label><br>
+                <input type="number" id="imesNasc"><br><br>
+
+                <label>Ano de nascimento:</label><br>
+                <input type="number" id="ianoNasc"><br><br>
+
+                <label>Dia atual:</label><br>
+                <input type="number" id="idiaAtual"><br><br>
+
+                <label>Mês atual:</label><br>
+                <input type="number" id="imesAtual"><br><br>
+
+                <label>Ano atual:</label><br>
+                <input type="number" id="ianoAtual"><br><br>
+
+                <button onclick="idade()" class="ibuttontela">Calcular Idade</button><br><br>
+                <label for="">Sua idade é:</label>
+                <input type="text" id="iresultado" readonly placeholder="Idade aparecerá aqui">
+            </div>`;
+            }
+            else if (pagina === "primo") {
+                main.innerHTML = `
+            <div class=divborda>
+                <h3>Verificar se o número é primo</h3>
+ 
+                <label>Digite um número inteiro:</label><br>
+                <input type="number" id="inumero"><br><br>
+
+                <button onclick="primo()" class="ibuttontela">Verificar</button><br><br>
+
+                <input type="text" id="iresultado" readonly placeholder="Resultado aparecerá aqui">
+            </div>`;
+            }
+
+            else if (pagina === "mes") {
+                main.innerHTML = `
+            <div class=divborda>
+                <h3>Mês por número (1 a 12)</h3>
+
+                <label>Digite um número de 1 a 12:</label><br>
+                <input type="number" id="inumero"><br><br>
+
+                <button onclick="mes()" class="ibuttontela">Mostrar mês</button><br><br>
+
+                <input type="text" id="iresultado" readonly placeholder="Nome do mês aparecerá aqui">
+            </div>`;
+            }
+
+            else if (pagina === "contracheque") {
+                main.innerHTML = `
+            <div class=divborda>
+                <h3>Calcular Contracheque</h3>
+
+                <label>Digite o salário bruto (R$):</label><br>
+                <input type="number" id="isalarioBruto"><br><br>
+
+                <button onclick="contracheque()" class="ibuttontela">Calcular</button><br><br>
+
+                <label>Descontos:</label><br>
+                <input type="text" id="iinss" readonly placeholder="INSS"><br>
+                <input type="text" id="isalarioFamilia" readonly placeholder="Salário Família"><br>
+                <input type="text" id="ivaleTransporte" readonly placeholder="Vale Transporte"><br>
+                <input type="text" id="ifgts" readonly placeholder="FGTS"><br><br>
+
+                <label>Salário líquido:</label><br>
+                <input type="text" id="iliquido" readonly placeholder="Salário líquido aparecerá aqui">
+            </div>`;
+            }
+
+        }
+
+
+
+    </script>
+</body>
+
+</html>

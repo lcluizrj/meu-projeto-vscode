@@ -1,0 +1,3118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CLSysPDV - Sistema Comercial</title>
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-claro: #f8fafc;
+            --bg-card-claro: #ffffff;
+            --texto-claro: #1e293b;
+            --borda-clara: #cbd5e1;
+            --bg-pdv: #090d16;
+            --bg-card-pdv: #131c2e;
+            --texto-pdv: #f8fafc;
+            --borda-pdv: #22314d;
+            --input-pdv: #1b263f;
+            --azul-accent: #3b82f6;
+            --azul-hover: #2563eb;
+            --verde-sucesso: #10b981;
+            --vermelho-alerta: #ef4444;
+            --laranja-aviso: #f59e0b;
+        }
+
+        html,
+        body {
+            text-size-adjust: 100%;
+            -webkit-text-size-adjust: 100%;
+            width: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: var(--bg-claro);
+            color: var(--texto-claro);
+            margin: 0;
+            padding: 10px;
+            transition: background 0.2s;
+            font-size: 14px;
+        }
+
+        /* CUSTOM SCROLLBAR GLOBAL */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* CUSTOM SCROLLBAR MODO ESCURO (BALCÃO) */
+        body.modo-visual-pdv ::-webkit-scrollbar-track { background: #0f172a; }
+        body.modo-visual-pdv ::-webkit-scrollbar-thumb { background: #334155; }
+        body.modo-visual-pdv ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+        /* LOGIN */
+        .login-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #090d16 0%, #1e3a8a 50%, #3b82f6 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .login-box {
+            background: rgba(19, 28, 46, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            text-align: center;
+            color: #f8fafc;
+        }
+
+        .login-box h2 {
+            color: #60a5fa;
+            margin-bottom: 20px;
+            font-size: 24px;
+            border: none;
+            padding: 0;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .login-box input, .login-box select {
+            background-color: rgba(27, 38, 63, 0.9);
+            color: white;
+            border: 1px solid #334155;
+            margin-bottom: 15px;
+            transition: border-color 0.2s;
+        }
+        
+        .login-box input:focus, .login-box select:focus {
+            border-color: #60a5fa;
+        }
+
+        .login-error {
+            color: #ef4444;
+            font-size: 13px;
+            margin-bottom: 10px;
+            display: none;
+            background: rgba(239, 68, 68, 0.1);
+            padding: 8px;
+            border-radius: 4px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: var(--bg-card-claro);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--borda-clara);
+            width: 100%;
+            display: none; 
+        }
+
+        body.modo-visual-pdv { background-color: var(--bg-pdv); color: var(--texto-pdv); }
+        body.modo-visual-pdv .container { background: var(--bg-card-pdv); border-color: var(--borda-pdv); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5); }
+        body.modo-visual-pdv h1, body.modo-visual-pdv h2, body.modo-visual-pdv h3 { color: var(--texto-pdv); }
+        body.modo-visual-pdv input, body.modo-visual-pdv select { background-color: var(--input-pdv); color: white; border-color: var(--borda-pdv); }
+        body.modo-visual-pdv input:focus, body.modo-visual-pdv select:focus { border-color: var(--azul-accent); outline: none; }
+        body.modo-visual-pdv h2 { border-bottom-color: var(--borda-pdv); }
+
+        h1, h2, h3 { color: var(--texto-claro); margin-top: 0; }
+        h1 { font-size: 18px; display: flex; align-items: center; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+        h2 { font-size: 15px; margin-bottom: 10px; border-bottom: 1px solid #cbd5e1; padding-bottom: 5px; }
+
+        .abas-nav-container { display: flex; justify-content: center; margin-bottom: 15px; width: 100%; }
+        .abas-nav { display: flex; flex-wrap: wrap; gap: 6px; background: #e2e8f0; padding: 6px; border-radius: 6px; width: 100%; }
+        body.modo-visual-pdv .abas-nav { background: #0f172a; border: 1px solid var(--borda-pdv); }
+
+        .aba-btn { flex: 1 1 calc(33.33% - 6px); background: transparent; color: #64748b; border: none; padding: 10px 8px; font-size: 13px; font-weight: 600; cursor: pointer; text-align: center; border-radius: 4px; transition: all 0.2s; white-space: nowrap; min-width: 100px; }
+        body.modo-visual-pdv .aba-btn { color: #94a3b8; }
+        .aba-btn.ativa { background-color: var(--azul-accent); color: white !important; }
+
+        .aba-conteudo { display: none; }
+        .aba-conteudo.ativa { display: block; }
+
+        .pdv-layout-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+        @media(min-width: 992px) { .pdv-layout-grid { grid-template-columns: 1.3fr 0.7fr; } }
+
+        .pdv-col-esquerda, .pdv-col-direita { display: flex; flex-direction: column; gap: 15px; }
+        .pdv-painel { background: #f1f5f9; border: 1px solid var(--borda-clara); padding: 15px; border-radius: 8px; }
+        body.modo-visual-pdv .pdv-painel { background: #172237; border-color: var(--borda-pdv); }
+
+        .pdv-campo-duplo { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+        @media(max-width: 576px) { .pdv-campo-duplo { grid-template-columns: 1fr; } }
+        .pdv-insercao-grid { display: grid; grid-template-columns: 2fr 0.8fr 1.2fr; gap: 10px; }
+        @media(max-width: 576px) { .pdv-insercao-grid { grid-template-columns: 1fr; } }
+
+        .pdv-total-card { background: #0f172a; border: 2px solid var(--verde-sucesso); padding: 20px; border-radius: 8px; text-align: center; box-shadow: inset 0 0 10px rgba(16, 185, 129, 0.1); }
+        .pdv-total-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #94a3b8; font-weight: bold; margin-bottom: 5px; }
+        .pdv-total-value { font-size: 36px; font-weight: 800; color: var(--verde-sucesso); font-family: monospace; }
+
+        .pdv-label { font-size: 11px; font-weight: 600; margin-bottom: 4px; display: block; color: #64748b; }
+        body.modo-visual-pdv .pdv-label { color: #94a3b8; }
+
+        .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 15px; }
+        .card { background: #f1f5f9; padding: 12px; border-radius: 6px; border: 1px solid var(--borda-clara); border-left: 4px solid var(--azul-accent); }
+        .card.lucro { border-left-color: var(--verde-sucesso); }
+        .card.parado { border-left-color: var(--laranja-aviso); }
+        .card.sub-caixa { border-left-color: #a855f7; font-size: 12px; }
+        .card.sangria-card { border-left-color: #ef4444; }
+        .card-titulo { font-size: 10px; color: #64748b; text-transform: uppercase; font-weight: bold; }
+        .card-valor { font-size: 18px; font-weight: bold; margin-top: 3px; }
+        .grid-valores-caixa { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 5px; }
+
+        .form-group { background: #f1f5f9; padding: 12px; border-radius: 6px; border: 1px solid var(--borda-clara); margin-bottom: 15px; }
+        body.modo-visual-pdv .form-group { background: #172237; border-color: var(--borda-pdv); }
+
+        input, select { width: 100%; padding: 8px; border: 1px solid var(--borda-clara); border-radius: 4px; background-color: white; color: var(--texto-claro); height: 42px; font-size: 14px; }
+        
+        .container-validade { display: flex; flex-direction: column; justify-content: center; }
+        .container-validade label { font-size: 11px; font-weight: bold; color: #64748b; margin-bottom: 2px; }
+        .container-validade input { max-width: 100%; height: 42px; padding: 4px; }
+
+        .btn-principal { width: 100%; padding: 10px; background-color: var(--azul-accent); color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 14px; height: 42px; transition: background 0.2s; }
+        .btn-principal:hover { background-color: var(--azul-hover); }
+        .btn-principal:disabled { background-color: #94a3b8; cursor: not-allowed; opacity: 0.7; }
+
+        .busca-filtro-container { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+        .botoes-filtro-grid { display: flex; gap: 4px; width: 100%; }
+
+        .btn-filtro { flex: 1; background-color: #f1f5f9; color: #64748b; font-size: 12px; font-weight: bold; padding: 10px 8px; text-align: center; border: 1px solid var(--borda-clara); cursor: pointer; border-radius: 4px; }
+        body.modo-visual-pdv .btn-filtro { background-color: #172237; border-color: var(--borda-pdv); color: #94a3b8; }
+        .btn-filtro.ativo { background-color: var(--azul-accent) !important; color: white !important; border-color: var(--azul-accent) !important; }
+
+        /* TABELA COM ROLAGEM GERAL ATIVADA */
+        .tabela-wrapper { overflow-x: auto; overflow-y: auto; max-height: 55vh; background: white; border-radius: 6px; border: 1px solid var(--borda-clara); }
+        body.modo-visual-pdv .tabela-wrapper { background: #131c2e; border-color: var(--borda-pdv); }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid var(--borda-clara); font-size: 13px; }
+        body.modo-visual-pdv th, body.modo-visual-pdv td { border-bottom-color: var(--borda-pdv); }
+        th { background-color: #f1f5f9; color: #64748b; position: sticky; top: 0; z-index: 10; box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1); }
+        body.modo-visual-pdv th { background-color: #172237; color: var(--texto-pdv); }
+
+        .btn-delete, table .btn-delete, .btn-excluir-carrinho { padding: 5px 10px !important; background-color: #1e293b !important; color: #ffffff !important; border: 1px solid #475569 !important; cursor: pointer; border-radius: 4px; font-weight: bold !important; font-size: 12px; display: inline-block; transition: background 0.1s; }
+        .btn-delete:hover, table .btn-delete:hover, .btn-excluir-carrinho:hover { background-color: #0f172a !important; }
+
+        .card-produto-mobile { background: white; border: 1px solid var(--borda-clara); border-radius: 6px; padding: 12px; margin-bottom: 10px; }
+        body.modo-visual-pdv .card-produto-mobile { background: #172237; border-color: var(--borda-pdv); }
+        .linha-card-mobile { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 13px; }
+
+        .estoque-baixo { background-color: #fee2e2 !important; }
+        .produto-vencido { background-color: #fca5a5 !important; }
+        .produto-quase-vencido { background-color: #fef3c7 !important; }
+        body.modo-visual-pdv .estoque-baixo { background-color: #311c1c !important; }
+        body.modo-visual-pdv .produto-vencido { background-color: #4c1d1d !important; }
+        body.modo-visual-pdv .produto-quase-vencido { background-color: #452b16 !important; }
+
+        .badge-validade { display: inline-block; font-size: 10px; font-weight: bold; padding: 1px 4px; border-radius: 3px; }
+        .bv-vencido { background: #fee2e2; color: #991b1b; }
+        .bv-quase { background: #fef3c7; color: #92400e; }
+        .bv-ok { background: #e2e8f0; color: #475569; }
+
+        .badge { padding: 2px 4px; border-radius: 3px; font-size: 10px; font-weight: bold; text-transform: uppercase; }
+        .badge-entrada { background-color: #c6f6d5; color: #22543d; }
+        .badge-venda { background-color: #fed7d7; color: #742a2a; }
+        .badge-servico { background-color: #e0f2fe; color: #0369a1; }
+        .badge-gasto { background-color: #ffedd5; color: #9a3412; }
+
+        .loading-status { background-color: #1e3a8a; color: #93c5fd; padding: 8px; border-radius: 4px; margin-bottom: 10px; font-weight: bold; display: none; text-align: center; font-size: 13px; }
+        #cupomImpressaoArea { display: none; }
+
+        .btn-action { border: none; color: white; padding: 6px 10px; cursor: pointer; border-radius: 3px; font-weight: bold; font-size: 13px; }
+        .btn-add { background-color: var(--verde-sucesso); }
+        .btn-edit { background-color: #64748b; }
+
+        .input-btn-group { display: flex; gap: 5px; }
+
+        .linha-clicavel { cursor: pointer; }
+        .linha-clicavel:hover { background-color: rgba(59, 130, 246, 0.1) !important; }
+        .detalhe-operacao { background-color: rgba(0, 0, 0, 0.03); }
+        body.modo-visual-pdv .detalhe-operacao { background-color: rgba(255, 255, 255, 0.04); }
+        .detalhe-container { padding: 12px 15px; border-left: 4px solid var(--azul-accent); }
+        .detalhe-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
+        .detalhe-bloco { font-size: 12px; }
+
+        .sub-nav-historico { display: flex; gap: 5px; margin-bottom: 15px; background: rgba(0, 0, 0, 0.05); padding: 5px; border-radius: 5px; }
+        body.modo-visual-pdv .sub-nav-historico { background: rgba(255, 255, 255, 0.05); }
+        .sub-aba-btn { flex: 1; background: transparent; border: none; padding: 8px; cursor: pointer; font-weight: bold; font-size: 12px; color: #64748b; border-radius: 4px; text-align: center; }
+        body.modo-visual-pdv .sub-aba-btn { color: #94a3b8; }
+        .sub-aba-btn.ativa { background: var(--azul-accent); color: white !important; }
+
+        .btn-scan-pdv { display: none !important; height: 42px; }
+
+        /* Estilos do Campo de Senha com Visibilidade e Manter Conectado */
+        .wrapper-senha-login { position: relative; display: flex; align-items: center; width: 100%; margin-bottom: 15px;}
+        .wrapper-senha-login input { margin-bottom: 0 !important; padding-right: 40px; }
+        .btn-mostrar-senha { position: absolute; right: 10px; background: none; border: none; color: #60a5fa; cursor: pointer; font-size: 16px; outline: none; }
+        .manter-conectado-container { display: flex; align-items: center; gap: 8px; margin-bottom: 15px; justify-content: flex-start; cursor: pointer; font-size: 13px; color: #cbd5e1; }
+        .manter-conectado-container input { width: auto; height: auto; margin: 0; cursor: pointer; }
+
+        /* Estilo da Grade de Taxas do Parcelamento */
+        .grid-taxas-credito { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px; margin-top: 10px; }
+        .taxa-card-individual { background: rgba(27, 38, 63, 0.5); border: 1px solid var(--borda-pdv); padding: 8px; border-radius: 6px; text-align: center; }
+        .taxa-card-individual label { font-size: 11px; font-weight: bold; color: #94a3b8; display: block; margin-bottom: 4px; }
+        .taxa-card-individual input { height: 32px; text-align: center; font-size: 12px; background: var(--input-pdv); border: 1px solid var(--borda-pdv); color: white; border-radius: 4px; }
+
+        /* Tabela de Bloqueio de Telas (Permissões) */
+        .tabela-permissoes { width: 100%; margin-top: 10px; border-collapse: collapse; }
+        .tabela-permissoes th, .tabela-permissoes td { padding: 8px; border: 1px solid var(--borda-pdv); text-align: left; }
+        .tabela-permissoes th { background: #1e293b; color: white; }
+        .tabela-permissoes input[type="checkbox"] { width: auto; height: auto; cursor: pointer; }
+
+        /* ESTILOS DO PAINEL ADMIN (SANFONA) */
+        .admin-details { background: #f1f5f9; border: 1px solid var(--borda-clara); border-radius: 6px; margin-bottom: 15px; overflow: hidden; }
+        body.modo-visual-pdv .admin-details { background: #172237; border-color: var(--borda-pdv); }
+        .admin-summary { padding: 12px 15px; font-weight: bold; cursor: pointer; background: #e2e8f0; color: var(--texto-claro); list-style: none; display: flex; justify-content: space-between; align-items: center; border-radius: 6px; }
+        body.modo-visual-pdv .admin-summary { background: #1e293b; color: var(--texto-pdv); }
+        .admin-summary::-webkit-details-marker { display: none; }
+        .admin-summary::after { content: '▼'; font-size: 12px; transition: transform 0.2s; }
+        .admin-details[open] > .admin-summary::after { transform: rotate(180deg); }
+        .admin-details[open] > .admin-summary { border-bottom-left-radius: 0; border-bottom-right-radius: 0; border-bottom: 1px solid var(--borda-clara); }
+        body.modo-visual-pdv .admin-details[open] > .admin-summary { border-bottom-color: var(--borda-pdv); }
+        .admin-content { padding: 15px; }
+
+        .sub-details { margin-bottom: 10px; border: 1px solid var(--borda-clara); border-radius: 4px; background: white; }
+        body.modo-visual-pdv .sub-details { background: #131c2e; border-color: var(--borda-pdv); }
+        .sub-summary { padding: 10px 15px; font-weight: bold; cursor: pointer; background: rgba(0,0,0,0.03); font-size: 13px; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+        body.modo-visual-pdv .sub-summary { background: rgba(255,255,255,0.05); }
+        .sub-summary::-webkit-details-marker { display: none; }
+        .sub-summary::after { content: '▼'; font-size: 10px; transition: transform 0.2s; }
+        .sub-details[open] > .sub-summary::after { transform: rotate(180deg); }
+        .sub-content { padding: 15px; }
+
+        @media(min-width: 768px) {
+            .input-btn-group .btn-action.btn-add { display: none !important; }
+            .busca-filtro-container { flex-direction: row; align-items: center; }
+            .botoes-filtro-grid { flex: none; width: auto; }
+            .tabela-desktop-visivel { display: table !important; }
+            .lista-cards-mobile { display: none !important; }
+            .aba-btn { flex: 1; font-size: 12px; }
+            .estoque-layout-botoes { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        }
+
+        @media(max-width: 767px) {
+            .btn-scan-pdv { display: block !important; }
+            .tabela-desktop-visivel { display: none !important; }
+            .lista-cards-mobile { display: block !important; }
+            .aba-btn { flex: 1 1 calc(50% - 6px); }
+            input, select, .btn-principal { height: 44px; font-size: 15px; }
+            .estoque-layout-botoes { display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px; width: 100%; }
+            .estoque-layout-botoes button { width: 100%; }
+        }
+
+        @media print {
+            body * { display: none !important; }
+            #cupomImpressaoArea { display: block !important; visibility: visible !important; position: absolute !important; left: 0 !important; top: 0 !important; width: 100% !important; max-width: 80mm !important; background: #ffffff !important; color: #000000 !important; font-family: 'Courier New', Courier, monospace !important; font-size: 12px !important; line-height: 1.2 !important; padding: 5px !important; margin: 0 !important; }
+            #cupomImpressaoArea * { display: block !important; visibility: visible !important; color: #000000 !important; background: #ffffff !important; }
+            @page { margin: 0; }
+        }
+
+        .btn-backup-cinza { background-color: #475569 !important; color: #ffffff !important; border: 1px solid #334155 !important; padding: 8px 12px; font-size: 13px; font-weight: bold; border-radius: 4px; cursor: pointer; transition: background 0.2s; height: 38px; display: inline-flex; align-items: center; justify-content: center; }
+        .btn-backup-cinza:hover { background-color: #334155 !important; }
+        .container-backup-botoes { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-top: 5px; }
+
+        /* Estilo do Painel de Caixa */
+        .painel-caixa {
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid var(--borda-clara);
+            transition: all 0.3s; flex-wrap: wrap; gap: 10px;
+        }
+
+        /* Menu Moderno do Caixa (Dropdown) */
+        .dropdown-menu-caixa {
+            display: none; position: absolute; top: 45px; right: 0; background: var(--bg-card-claro); 
+            border: 1px solid var(--borda-clara); border-radius: 8px; padding: 10px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2); flex-direction: column; gap: 8px; z-index: 100; min-width: 180px;
+        }
+        body.modo-visual-pdv .dropdown-menu-caixa { background: var(--bg-card-pdv); border-color: var(--borda-pdv); }
+        body.modo-visual-pdv #btnToggleOpcoesCaixa { background-color: var(--input-pdv) !important; color: var(--texto-pdv) !important; border-color: var(--borda-pdv) !important; }
+    </style>
+    
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAZuaQBqgTMf2yJ55F-m4bHzJDxwKlMMTg",
+            authDomain: "estoque-nas-nuvens.firebaseapp.com",
+            databaseURL: "https://estoque-nas-nuvens-default-rtdb.firebaseio.com", 
+            projectId: "estoque-nas-nuvens",
+            storageBucket: "estoque-nas-nuvens.firebasestorage.app",
+            messagingSenderId: "801173733212",
+            appId: "1:801173733212:web:7eb14a78a93c4b25074b99",
+            measurementId: "G-QJ62GR566J"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        
+        // Pasta única no Firebase para manter todo o app em perfeita sincronia
+        const appRef = ref(db, "clsyspdv_dados_completos"); 
+
+        // Função global que envia os dados para a nuvem
+        window.salvarDadosNaNuvem = async function() {
+            const statusEl = document.getElementById('loadingStatus');
+            if(statusEl) { statusEl.style.display = 'block'; statusEl.innerText = 'Salvando na nuvem...'; }
+            
+            try {
+                await set(appRef, {
+                    produtos: window.produtos || [],
+                    servicos: window.servicos || [],
+                    clientes: window.clientes || [],
+                    insumos: window.insumos || [],
+                    historico: window.historico || [],
+                    logEstoque: window.logEstoque || [],
+                    logInsumos: window.logInsumos || [],
+                    logCliente: window.logCliente || [],
+                    taxasCredito: window.taxasCredito || Array(12).fill(0),
+                    permissoesOperador: window.permissoesOperador || {},
+                    taxaDebito: window.taxaDebito || 0,
+                    apiNfeUrl: window.apiNfeUrl || '',
+                    apiNfeKey: window.apiNfeKey || '',
+                    temaBrancoPdv: window.temaBrancoPdv || false,
+                    estadoCaixa: window.estadoCaixa || { aberto: false, saldoInicial: 0, dataAbertura: null },
+                    sangrias: window.sangrias || []
+                });
+                
+                if(statusEl) statusEl.style.display = 'none';
+                document.getElementById('statusConexao').innerHTML = "● Sincronizado (Nuvem)";
+                document.getElementById('statusConexao').style.color = "var(--verde-sucesso)";
+            } catch (error) {
+                console.error("Erro ao salvar no Firebase:", error);
+                document.getElementById('statusConexao').innerHTML = "● Erro de Rede";
+                document.getElementById('statusConexao').style.color = "var(--vermelho-alerta)";
+            }
+        };
+
+        // Fica escutando a nuvem para atualizar os outros dispositivos
+        onValue(appRef, (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                window.produtos = data.produtos || [];
+                window.servicos = data.servicos || [];
+                window.clientes = data.clientes || [];
+                window.insumos = data.insumos || [];
+                window.historico = data.historico || [];
+                window.logEstoque = data.logEstoque || [];
+                window.logInsumos = data.logInsumos || [];
+                window.logCliente = data.logCliente || [];
+                window.taxasCredito = data.taxasCredito || Array(12).fill(0);
+                window.permissoesOperador = data.permissoesOperador || {};
+                window.taxaDebito = data.taxaDebito || 0;
+                window.apiNfeUrl = data.apiNfeUrl || '';
+                window.apiNfeKey = data.apiNfeKey || '';
+                window.temaBrancoPdv = data.temaBrancoPdv || false;
+                window.estadoCaixa = data.estadoCaixa || { aberto: false, saldoInicial: 0, dataAbertura: null };
+                window.sangrias = data.sangrias || [];
+
+                if (typeof window.atualizarInterfaceCaixa === "function") window.atualizarInterfaceCaixa();
+                if (typeof window.renderizerTabela === "function") window.renderizerTabela();
+                if (typeof window.renderizarServicos === "function") window.renderizarServicos();
+                if (typeof window.renderizarClientes === "function") window.renderizarClientes();
+                if (typeof window.renderizarInsumos === "function") window.renderizarInsumos();
+                if (typeof window.calcularDashboardERenderizarHistorico === "function") window.calcularDashboardERenderizarHistorico();
+                if (typeof window.renderizarLogsTabelas === "function") window.renderizarLogsTabelas();
+                if (typeof window.filtrarProdutosPDV === "function") window.filtrarProdutosPDV('');
+                
+                // --- ATUALIZAÇÕES VISUAIS DAS TAXAS E CONFIGS NA TELA ---
+                if (document.getElementById('configTaxaDebito')) {
+                    document.getElementById('configTaxaDebito').value = window.taxaDebito;
+                }
+                if (document.getElementById('apiNfeUrl')) {
+                    document.getElementById('apiNfeUrl').value = window.apiNfeUrl;
+                }
+                if (document.getElementById('apiNfeKey')) {
+                    document.getElementById('apiNfeKey').value = window.apiNfeKey;
+                }
+                if (document.getElementById('configTemaBrancoPDV')) {
+                    document.getElementById('configTemaBrancoPDV').checked = window.temaBrancoPdv;
+                    if(typeof window.aplicarTemaBrancoPDV === "function") window.aplicarTemaBrancoPDV();
+                }
+
+                if (typeof window.renderizarGradeTaxas === "function") {
+                    window.renderizarGradeTaxas();
+                }
+                
+                const statusEl = document.getElementById('loadingStatus');
+                if(statusEl) statusEl.style.display = 'none';
+            }
+        });
+    </script>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+</head>
+
+<body class="modo-visual-pdv">
+
+    <div id="telaBloqueioLogin" class="login-backdrop">
+        <div class="login-box">
+            <h2>🔐 Acesso CLSysPDV</h2>
+            <div id="msgErroLogin" class="login-error">Usuário ou senha incorretos!</div>
+            
+            <div style="text-align: left; margin-bottom: 5px;"><label class="pdv-label" style="color: #94a3b8;">Usuário:</label></div>
+            <select id="loginUsuario" style="margin-bottom: 15px;">
+                <option value="admin">Administrador (admin)</option>
+                <option value="operador">Operador (operador)</option>
+            </select>
+            
+            <div style="text-align: left; margin-bottom: 5px;"><label class="pdv-label" style="color: #94a3b8;">Senha:</label></div>
+            <div class="wrapper-senha-login">
+                <input type="password" id="loginSenha" placeholder="Digite a senha" onkeypress="verificarLoginEnter(event)">
+                <button type="button" class="btn-mostrar-senha" onclick="toggleVisibilidadeSenha()">👁️</button>
+            </div>
+
+            <label class="manter-conectado-container">
+                <input type="checkbox" id="keepConnectedCheckbox"> Manter conectado
+            </label>
+            
+            <button class="btn-principal" onclick="autenticarUsuarioSistema()" style="margin-top: 10px;">Entrar no Sistema</button>
+        </div>
+    </div>
+
+    <div class="container" id="containerAppPrincipal">
+        <h1>📦 CLSysPDV <span id="statusConexao" style="font-size: 12px; color: var(--verde-sucesso);">● Sincronizado (Local/Nuvem)</span>
+            <div style="margin-left: auto; display: flex; gap: 8px; align-items: center;">
+                <span id="labelNomeUsuario" style="font-size: 13px; color: #94a3b8;"></span>
+                <button class="btn-delete" style="background-color: var(--vermelho-alerta) !important; height: 38px;" onclick="deslogarSistemaCLSys()">🚪 Sair</button>
+            </div>
+        </h1>
+        <div id="loadingStatus" class="loading-status">Sincronizando dados com a nuvem...</div>
+
+        <div class="abas-nav-container">
+            <div class="abas-nav">
+                <button class="aba-btn ativa" id="aba-pdv-trigger" onclick="alternarAba('pdv')">🛒 Balcão PDV</button>
+                <button class="aba-btn" id="aba-servicos-trigger" onclick="alternarAba('servicos')">🛠️ Serviços</button>
+                <button class="aba-btn" id="aba-estoque-trigger" onclick="alternarAba('estoque')">📦 Estoque</button>
+                <button class="aba-btn" id="aba-insumos-trigger" onclick="alternarAba('insumos')">🍳 Gastos / Insumos</button>
+                <button class="aba-btn" id="aba-clientes-trigger" onclick="alternarAba('clientes')">👥 Clientes</button>
+                <button class="aba-btn" id="aba-historico-trigger" onclick="alternarAba('historico')">📋 Caixa / Históricos</button>
+            </div>
+        </div>
+
+        <div id="aba-pdv" class="aba-conteudo ativa">
+            
+            <!-- PAINEL DE CONTROLE DE CAIXA NO PDV -->
+            <div id="painelCaixaPdv" class="painel-caixa">
+                <div style="display:flex; align-items:center; gap: 10px;">
+                    <div id="iconeStatusCaixa" style="width:14px; height:14px; border-radius:50%; background-color:#ef4444; box-shadow: 0 0 5px rgba(0,0,0,0.2);"></div>
+                    <div>
+                        <h3 style="margin:0; font-size: 16px;" id="textoStatusCaixa">Caixa Fechado</h3>
+                        <small id="subTextoCaixa" style="color: #64748b;">Abra o caixa para iniciar as vendas</small>
+                    </div>
+                </div>
+                
+                <div id="blocoAberturaCaixa" style="display:flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                    <input type="number" id="valorTrocoInicial" placeholder="Troco Inicial (R$)" style="width: 150px; height: 38px; display: block; margin: 0;">
+                    <button class="btn-principal" id="btnAcaoCaixa" style="width: auto; height: 38px;" onclick="alternarStatusCaixa()">Abrir Caixa</button>
+                </div>
+
+                <div id="blocoOpcoesCaixaAberto" style="display:none; position: relative;">
+                    <button class="btn-principal" id="btnToggleOpcoesCaixa" style="width: auto; height: 38px; background-color: var(--bg-card-claro); color: var(--texto-claro); border: 1px solid var(--borda-clara);" onclick="toggleMenuCaixa()">⚙️ Opções do Caixa ▼</button>
+                    <div id="menuOpcoesCaixa" class="dropdown-menu-caixa">
+                        <button class="btn-principal" id="btnSangria" style="height: 38px; background-color: var(--laranja-aviso); font-size: 13px;" onclick="fazerSangria()">💸 Sangria (Retirada)</button>
+                        <button class="btn-principal" style="height: 38px; background-color: var(--vermelho-alerta); font-size: 13px;" onclick="alternarStatusCaixa()">🔒 Fechar Caixa</button>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <span class="pdv-label" style="font-size: 14px;">Módulo Operacional Balcão</span>
+            </div>
+            <div class="pdv-layout-grid">
+                <div class="pdv-col-esquerda">
+                    <div class="pdv-painel">
+                        <h2>⚡ Lançamento de Itens</h2>
+                        <div class="pdv-campo-duplo">
+                            <div>
+                                <label class="pdv-label">1. Filtrar Termo / Código de Barras:</label>
+                                <div class="input-btn-group">
+                                    <input type="text" id="pdvCodBarras" placeholder="Nome ou código..." autofocus oninput="filtrarProdutosPDV(this.value)" onkeypress="verificarBuscaProdutoEnter(event)">
+                                    <button class="btn-action btn-add btn-scan-pdv" onclick="alternarCameraScanner()">📷 Scan</button>
+                                </div>
+                                <div id="scanner-container" style="display:none; width: 100%; max-width: 300px; margin-top: 10px;"></div>
+                            </div>
+                            <div>
+                                <label class="pdv-label">2. Selecionar Item:</label>
+                                <select id="pdvSelecaoProduto">
+                                    <option value="">Carregando itens...</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="pdv-insercao-grid">
+                            <div style="display:flex; flex-direction:column; justify-content:center;">
+                                <label class="pdv-label">3. Quantidade:</label>
+                                <input type="number" id="pdvQtd" value="1" min="0.1" step="any" placeholder="Qtd">
+                            </div>
+                            <div style="display:flex; align-items:flex-end; grid-column: span 2;">
+                                <button class="btn-principal" id="btnInserirCarrinho" style="background-color: var(--azul-accent); height:38px;" onclick="adicionarItemAoCarrinho()">🛒 Inserir</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pdv-painel" style="flex: 1;">
+                        <h3>📋 Itens Adicionados</h3>
+                        <div class="tabela-wrapper" style="max-height: 250px;">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Qtd</th>
+                                        <th>Unitário</th>
+                                        <th>Subtotal</th>
+                                        <th style="width: 50px;">Ação</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="carrinhoCorpo">
+                                    <tr>
+                                        <td colspan="5" style="text-align:center; color: #64748b;">Nenhum produto ou serviço lançado.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="pdv-col-direita">
+                    <div class="pdv-total-card">
+                        <div class="pdv-total-label" id="pdvLabelSubtotal">Subtotal Geral</div>
+                        <div class="pdv-total-value" id="pdvTotalVenda">R$ 0,00</div>
+                    </div>
+                    <div class="pdv-painel">
+                        <h2>🔒 Fechamento da Venda</h2>
+                        <div style="margin-bottom: 12px;">
+                            <label class="pdv-label">Vincular Cliente:</label>
+                            <select id="pdvSelecaoCliente">
+                                <option value="">Consumidor Final (Não identificado)</option>
+                            </select>
+                        </div>
+                        
+                        <div id="container-pagamentos" style="margin-bottom: 12px;">
+                            <div class="pdv-campo-duplo">
+                                <div>
+                                    <label class="pdv-label">Valor Pago 1</label>
+                                    <input type="number" id="valorPag1" step="0.01" placeholder="R$ 0,00" oninput="atualizarTotalFinalPDV()">
+                                </div>
+                                <div>
+                                    <label class="pdv-label">Forma 1</label>
+                                    <select id="pdvFormaPagamento" onchange="verificarParcelamento(); atualizarTotalFinalPDV();">
+                                        <option value="Dinheiro">Dinheiro 💵</option>
+                                        <option value="PIX">PIX ⚡</option>
+                                        <option value="Cartão de Débito">Cartão de Débito 💳</option>
+                                        <option value="Cartão de Crédito">Cartão de Crédito 💳</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <button type="button" class="btn-filtro" onclick="mostrarPagamento2()" style="margin-bottom: 15px; width: 100%; border: 1px dashed var(--borda-clara);">
+                                + Adicionar 2ª Forma de Pagamento
+                            </button>
+
+                            <div class="pdv-campo-duplo" id="bloco-pag2" style="display: none;">
+                                <div>
+                                    <label class="pdv-label">Valor Pago 2</label>
+                                    <input type="number" id="valorPag2" step="0.01" placeholder="R$ 0,00" oninput="atualizarTotalFinalPDV()">
+                                </div>
+                                <div>
+                                    <label class="pdv-label">Forma 2</label>
+                                    <select id="pdvFormaPagamento2" onchange="verificarParcelamento(); atualizarTotalFinalPDV();">
+                                        <option value="Dinheiro">Dinheiro 💵</option>
+                                        <option value="PIX">PIX ⚡</option>
+                                        <option value="Cartão de Débito">Cartão de Débito 💳</option>
+                                        <option value="Cartão de Crédito">Cartão de Crédito 💳</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="divParcelas" style="margin-bottom: 12px; display: none;">
+                            <label class="pdv-label">Parcelamento no Crédito:</label>
+                            <select id="pdvParcelas" onchange="atualizarTotalFinalPDV()">
+                                <option value="1x">1x (À vista)</option>
+                                <option value="2x">2x</option>
+                                <option value="3x">3x</option>
+                                <option value="4x">4x</option>
+                                <option value="5x">5x</option>
+                                <option value="6x">6x</option>
+                                <option value="7x">7x</option>
+                                <option value="8x">8x</option>
+                                <option value="9x">9x</option>
+                                <option value="10x">10x</option>
+                                <option value="11x">11x</option>
+                                <option value="12x">12x</option>
+                            </select>
+                        </div>
+
+                        <div style="margin-bottom: 20px; background-color: var(--input-pdv); border-radius: 4px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; color: var(--texto-pdv); font-size: 13px; font-weight: bold; padding: 10px;" onclick="const d=document.getElementById('containerDesconto'); const i=document.getElementById('iconDesc'); if(d.style.display==='none'){d.style.display='block';i.innerText='▲';}else{d.style.display='none';i.innerText='▼';}">
+                                <span>📉 Aplicar Desconto Final (%)</span>
+                                <span id="iconDesc">▼</span>
+                            </div>
+                            <div id="containerDesconto" style="display: none; padding: 0 10px 10px 10px;">
+                                <input type="number" id="pdvDesconto" value="" placeholder="Ex: 10 para dar 10%" min="0" step="0.01" oninput="atualizarTotalFinalPDV()">
+                            </div>
+                        </div>
+
+                        <button class="btn-principal" id="btnConcluirVenda" style="background-color: var(--verde-sucesso); height: 50px; font-size: 16px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);" onclick="finalizarVendaPDV()">🚀 Concluir e Imprimir</button>
+                        <button class="btn-principal" style="background-color: #8b5cf6; height: 50px; font-size: 16px; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2); margin-top: 10px;" onclick="emitirNotaFiscalAPI()">🧾 Emitir Nota Fiscal (API)</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="aba-servicos" class="aba-conteudo">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h2>🛠️ Cadastro e Gestão de Serviços</h2>
+                <button class="btn-delete" style="background-color: var(--vermelho-alerta) !important;" onclick="limparAbaServicos()">⚠️ Limpar Tudo</button>
+            </div>
+            
+            <div class="form-group" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px;">
+                <input type="text" id="nomeServico" placeholder="Nome do Serviço">
+                <input type="number" id="precoServico" placeholder="Preço do Serviço (R$)" step="0.01">
+                <input type="text" id="ncmServico" placeholder="Cód Serviço/NCM">
+                <input type="text" id="cfopServico" placeholder="CFOP (Ex: 5933)">
+                <button id="btnSalvarServico" class="btn-principal" onclick="adicionarServico()">Salvar Serviço</button>
+                <button id="btnCancelarServico" class="btn-principal" style="display:none; background-color: var(--vermelho-alerta);" onclick="cancelarEdicaoServico()">Voltar</button>
+            </div>
+            
+            <input type="text" id="filtroServicos" placeholder="🔍 Filtrar Serviços Cadastrados..." oninput="renderizarServicos()" style="margin-bottom: 10px;">
+
+            <div class="tabela-wrapper" style="margin-top: 15px;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nome do Serviço</th>
+                            <th>NCM / CFOP</th>
+                            <th>Preço</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listaServicos">
+                        <tr>
+                            <td colspan="4" style="text-align:center;">Nenhum serviço cadastrado.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="aba-estoque" class="aba-conteudo">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 10px;">
+                <span class="pdv-label" style="font-size: 14px; font-weight: bold;">Gerenciamento Global de Estoque</span>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn-principal" style="background-color: #f59e0b; width: auto; height: 38px; padding: 0 15px;" onclick="document.getElementById('inputUploadXML').click()">📥 Importar NFe (XML)</button>
+                    <input type="file" id="inputUploadXML" accept=".xml" style="display: none;" onchange="importarXMLNFe(event)">
+                    <button class="btn-delete" style="background-color: var(--vermelho-alerta) !important; height: 38px;" onclick="limparAbaEstoque()">⚠️ Limpar Tudo</button>
+                </div>
+            </div>
+            
+            <div class="form-group" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px;">
+                <input type="text" id="nomeProduto" placeholder="Nome do Produto">
+                <input type="text" id="codBarrasProduto" placeholder="Código de Barras">
+                <input type="text" id="ncmProduto" placeholder="NCM (8 dígitos)">
+                <input type="text" id="cfopProduto" placeholder="CFOP (Ex: 5102)">
+                <input type="number" id="qtdProduto" placeholder="Qtd Inicial" min="0" step="any">
+                <select id="unidadeMedida">
+                    <option value="un">un</option>
+                    <option value="kg">kg</option>
+                    <option value="g">g</option>
+                    <option value="L">L</option>
+                    <option value="ml">ml</option>
+                    <option value="cx">cx</option>
+                    <option value="pct">pct</option>
+                </select>
+                <input type="number" id="precoCompra" placeholder="Custo Compra (R$)" step="0.01">
+                <input type="number" id="precoVenda" placeholder="Preço Venda (R$)" step="0.01">
+                <div class="container-validade">
+                    <label>Data de Validade:</label>
+                    <input type="date" id="dataValidade">
+                </div>
+                <div style="grid-column: span 1; display: flex; gap: 4px;">
+                    <button id="btnSalvar" class="btn-principal" onclick="adicionarProduto()">Salvar</button>
+                    <button id="btnCancelar" class="btn-principal" style="display:none; background-color: var(--vermelho-alerta);" onclick="cancelarEdicao()">Voltar</button>
+                </div>
+            </div>
+
+            <div class="estoque-layout-botoes">
+                <div class="busca-filtro-container" style="flex: 1;">
+                    <input type="text" id="inputBusca" placeholder="🔍 Filtrar itens cadastrados..." oninput="renderizerTabela()">
+                    <div class="botoes-filtro-grid">
+                        <button class="btn-filtro ativo" id="filtro-todos" onclick="mudarFiltro('todos')">Todos</button>
+                        <button class="btn-filtro" id="filtro-baixo" onclick="mudarFiltro('baixo')">⚠️ Baixo</button>
+                        <button class="btn-filtro" id="filtro-vencidos" onclick="mudarFiltro('vencidos')">⏰ Críticos</button>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 15px;">
+                <div class="tabela-wrapper">
+                    <table class="tabela-desktop-visivel">
+                        <thead>
+                            <tr>
+                                <th>Produto / Cód</th>
+                                <th>Validade</th>
+                                <th>NCM / CFOP</th>
+                                <th>Saldo Estoque</th>
+                                <th>Custo</th>
+                                <th>Venda</th>
+                                <th>Margem Un.</th>
+                                <th style="text-align: center;">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="listaEstoqueDesktop">
+                            <tr>
+                                <td colspan="8" style="text-align:center;">Buscando informações...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div id="listaEstoqueMobile" class="lista-cards-mobile"></div>
+            </div>
+        </div>
+
+        <div id="aba-insumos" class="aba-conteudo">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h2>🍳 Lançamento de Gastos / Insumos Não Vendáveis</h2>
+                <button class="btn-delete" style="background-color: var(--vermelho-alerta) !important;" onclick="limparAbaInsumos()">⚠️ Limpar Tudo</button>
+            </div>
+            <p style="font-size: 12px; color: #64748b; margin-top: -5px;">Adicione custos operacionais vinculados a um produto/serviço para abater proporcionalmente à quantidade vendida.</p>
+            <div class="form-group" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px;">
+                <input type="text" id="insumoDescricao" placeholder="Descrição do Gasto (Ex: Embalagem)">
+                <input type="number" id="insumoValor" placeholder="Valor do Custo Unitário (R$)" step="0.01">
+                <select id="insumoProdutoVinculo">
+                    <option value="">Vincular Item (Opcional)</option>
+                </select>
+                <button id="btnSalvarInsumo" class="btn-principal" onclick="lancarGastoInsumo()">Salvar Insumo</button>
+                <button id="btnCancelarInsumo" class="btn-principal" style="display:none; background-color: var(--vermelho-alerta);" onclick="cancelarEdicaoInsumo()">Voltar</button>
+            </div>
+
+            <input type="text" id="filtroInsumos" placeholder="🔍 Filtrar Gastos Cadastrados..." oninput="renderizarInsumos()" style="margin-bottom: 10px;">
+
+            <div class="tabela-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Descrição</th>
+                            <th>Vínculo</th>
+                            <th>Valor Unitário</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listaInsumosCorpo">
+                        <tr>
+                            <td colspan="5" style="text-align:center;">Nenhum gasto registrado.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="aba-clientes" class="aba-conteudo">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h2>👥 Cadastro e Controle de Clientes</h2>
+                <button class="btn-delete" style="background-color: var(--vermelho-alerta) !important;" onclick="limparAbaClientes()">⚠️ Limpar Tudo</button>
+            </div>
+            <div class="form-group" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px;">
+                <input type="text" id="nomeCliente" placeholder="Nome do Cliente">
+                <input type="text" id="telefoneCliente" placeholder="Telefone / Contato">
+                <input type="text" id="observacoesCliente" placeholder="Observações (Dívidas, Preferências)">
+                <button id="btnSalvarCliente" class="btn-principal" onclick="adicionarCliente()">Salvar Cliente</button>
+                <button id="btnCancelarCliente" class="btn-principal" style="display:none; background-color: var(--vermelho-alerta);" onclick="cancelarEdicaoCliente()">Voltar</button>
+            </div>
+
+            <input type="text" id="filtroClientes" placeholder="🔍 Filtrar Clientes..." oninput="renderizarClientes()" style="margin-bottom: 10px;">
+
+            <div class="tabela-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nome do Cliente</th>
+                            <th>Telefone</th>
+                            <th>Observações</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listaClientesCorpo">
+                        <tr>
+                            <td colspan="4" style="text-align:center;">Nenhum cliente cadastrado.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="aba-historico" class="aba-conteudo">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h2>💰 Resumo Geral do Caixa</h2>
+            </div>
+            
+            <div style="display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; align-items: center;">
+                <input type="text" id="filtroHistorico" placeholder="🔍 Buscar por Cliente ou Pagamento..." oninput="calcularDashboardERenderizarHistorico()" style="flex: 2; min-width: 200px;">
+                <span style="color: #64748b; font-size: 13px; font-weight: bold;">De:</span>
+                <!-- CORREÇÃO: onchange trocado por oninput para puxar as datas de forma automática instantânea -->
+                <input type="date" id="filtroDataInicio" oninput="calcularDashboardERenderizarHistorico(); renderizarLogsTabelas()" style="flex: 1; min-width: 130px;">
+                <span style="color: #64748b; font-size: 13px; font-weight: bold;">Até:</span>
+                <input type="date" id="filtroDataFim" oninput="calcularDashboardERenderizarHistorico(); renderizarLogsTabelas()" style="flex: 1; min-width: 130px;">
+                <button class="btn-principal" style="width: auto; height: 42px; background-color: #64748b;" onclick="document.getElementById('filtroDataInicio').value=''; document.getElementById('filtroDataFim').value=''; calcularDashboardERenderizarHistorico(); renderizarLogsTabelas()">Mostrar Tudo</button>
+            </div>
+
+            <div class="dashboard">
+                <div class="card">
+                    <div class="card-titulo">Faturamento Acumulado</div>
+                    <div class="card-valor" id="dashFaturamento">R$ 0,00</div>
+                </div>
+                <div class="card lucro">
+                    <div class="card-titulo">Margem Real Concluída</div>
+                    <div class="card-valor" id="dashLucro" style="color: var(--verde-sucesso);">R$ 0,00</div>
+                </div>
+                <div class="card parado">
+                    <div class="card-titulo">Valor em Estoque</div>
+                    <div class="card-valor" id="dashCapitalParado" style="color: var(--laranja-aviso);" title="Se um dia for filtrado, exibe o saldo estimado retroativo daquele dia">R$ 0,00</div>
+                </div>
+                <div class="card sangria-card">
+                    <div class="card-titulo">Retiradas (Sangrias)</div>
+                    <div class="card-valor" style="color: var(--vermelho-alerta);">- R$ <span id="dashSangrias">0.00</span></div>
+                </div>
+                <div class="card sub-caixa">
+                    <div class="card-titulo">Entradas por Pagamento</div>
+                    <div class="grid-valores-caixa">
+                        <div title="Dinheiro Fisico Líquido (Faturamento - Sangrias + Fundo)">💵 Din Líg: <span id="cxDinheiro">0,00</span></div>
+                        <div>⚡ PIX: <span id="cxPix">0,00</span></div>
+                        <div>💳 Déb: <span id="cxDebito">0,00</span></div>
+                        <div>💳 Crd: <span id="cxCredito">0,00</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 25px;">
+                <div class="sub-nav-historico">
+                    <button class="sub-aba-btn ativa" id="sub-aba-financeiro" onclick="alternarSubHistorico('financeiro')">💰 Histórico Financeiro / Vendas</button>
+                    <button class="sub-aba-btn" id="sub-aba-estoque" onclick="alternarSubHistorico('estoque')">📦 Log de Estoque</button>
+                    <button class="sub-aba-btn" id="sub-aba-insumos" onclick="alternarSubHistorico('insumos')">🍳 Log de Insumos</button>
+                    <button class="sub-aba-btn" id="sub-aba-cliente" onclick="alternarSubHistorico('cliente')">👥 Log de Clientes</button>
+                </div>
+
+                <div id="sub-hist-financeiro" class="sub-hist-conteudo">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <h3>📋 Movimentações Financeiras de Vendas e Sangrias</h3>
+                    </div>
+
+                    <!-- NOVO PAINEL DO ADMINISTRADOR COM SANFONA (DETAILS) -->
+                    <details class="admin-details" id="containerConfigAdmin">
+                        <summary class="admin-summary">⚙️ Painel do Administrador (Expandir / Minimizar)</summary>
+                        <div class="admin-content">
+                            
+                            <details class="sub-details">
+                                <summary class="sub-summary">🖥️ Bloqueio de Telas e Abas</summary>
+                                <div class="sub-content">
+                                    <div style="margin-bottom: 15px;">
+                                        <label class="pdv-label">🎨 Aparência do Balcão PDV:</label>
+                                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: #64748b; font-size: 13px;">
+                                            <input type="checkbox" id="configTemaBrancoPDV" onchange="salvarConfigTemaPdv()" style="width: 16px; height: 16px; margin: 0; cursor: pointer;"> Manter o Balcão PDV com a cor branca (fundo claro igual ao resto do sistema)
+                                        </label>
+                                    </div>
+
+                                    <div style="margin-top: 20px;">
+                                        <label class="pdv-label">🔒 Bloqueio de Telas (Quais telas o Operador comum pode acessar):</label>
+                                        <table class="tabela-permissoes">
+                                            <thead>
+                                                <tr>
+                                                    <th>Tela / Aba</th>
+                                                    <th>Status do Acesso para o Operador</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>🛒 Balcão PDV</td>
+                                                    <td><span style="color: var(--verde-sucesso); font-weight: bold;">Liberado (Sempre)</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>🛠️ Serviços</td>
+                                                    <td><input type="checkbox" id="perm-servicos" onchange="salvarPermissoes()" style="width: auto; height: auto;"> Permitir Acesso</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>📦 Estoque</td>
+                                                    <td><input type="checkbox" id="perm-estoque" onchange="salvarPermissoes()" style="width: auto; height: auto;"> Permitir Acesso</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>🍳 Gastos / Insumos</td>
+                                                    <td><input type="checkbox" id="perm-insumos" onchange="salvarPermissoes()" style="width: auto; height: auto;"> Permitir Acesso</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>👥 Clientes</td>
+                                                    <td><input type="checkbox" id="perm-clientes" onchange="salvarPermissoes()" style="width: auto; height: auto;"> Permitir Acesso</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>📋 Caixa / Históricos</td>
+                                                    <td><span style="color: var(--vermelho-alerta); font-weight: bold;">Bloqueado (Somente Admin)</span></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </details>
+
+                            <details class="sub-details">
+                                <summary class="sub-summary">💳 Configurações de Taxas e API</summary>
+                                <div class="sub-content">
+                                    <div style="margin-bottom: 15px;">
+                                        <label class="pdv-label">🧾 Configuração da API de Nota Fiscal:</label>
+                                        <div class="pdv-campo-duplo">
+                                            <div>
+                                                <label class="pdv-label">Endpoint (URL) da API:</label>
+                                                <input type="text" id="apiNfeUrl" placeholder="Ex: https://api.suanota.com.br/v2/emitir" oninput="salvarConfigNFe()">
+                                            </div>
+                                            <div>
+                                                <label class="pdv-label">Chave de Acesso (API Key / Token):</label>
+                                                <input type="password" id="apiNfeKey" placeholder="Insira sua Chave da API (Token)" oninput="salvarConfigNFe()">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="pdv-campo-duplo" style="margin-bottom: 15px;">
+                                        <div>
+                                            <label class="pdv-label">Taxa Débito (Lojista %):</label>
+                                            <input type="number" id="configTaxaDebito" value="0" placeholder="0%" min="0" step="0.01" oninput="salvarTaxasConfig(); atualizarTotalFinalPDV()">
+                                        </div>
+                                    </div>
+
+                                    <div style="margin-top: 15px;">
+                                        <label class="pdv-label">Cadastrar Taxas do Crédito (Lojista %):</label>
+                                        <div class="grid-taxas-credito" id="gradeTaxasCredito">
+                                            <!-- Grade JS -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </details>
+
+                        </div>
+                    </details>
+
+                    <div class="tabela-wrapper" style="margin-top: 15px;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Data/Hora</th>
+                                    <th>Operação</th>
+                                    <th>Qtd</th>
+                                    <th>Total / Valor</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="listaHistFinanceiro">
+                                <tr><td colspan="5" style="text-align:center;">Nenhuma movimentação registrada.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="sub-hist-estoque" class="sub-hist-conteudo" style="display:none;">
+                    <h3>📋 Histórico de Logs do Estoque</h3>
+                    <div class="tabela-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Data/Hora</th>
+                                    <th>Item Alterado</th>
+                                    <th>Ação Executada</th>
+                                </tr>
+                            </thead>
+                            <tbody id="listaHistEstoque">
+                                <tr><td colspan="3" style="text-align:center;">Nenhum log encontrado.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="sub-hist-insumos" class="sub-hist-conteudo" style="display:none;">
+                    <h3>📋 Histórico de Logs de Insumos</h3>
+                    <div class="tabela-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Data/Hora</th>
+                                    <th>Descrição do Gasto</th>
+                                    <th>Ação Executada</th>
+                                </tr>
+                            </thead>
+                            <tbody id="listaHistInsumos">
+                                <tr><td colspan="3" style="text-align:center;">Nenhum log encontrado.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="sub-hist-cliente" class="sub-hist-conteudo" style="display:none;">
+                    <h3>📋 Histórico de Logs de Clientes</h3>
+                    <div class="tabela-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Data/Hora</th>
+                                    <th>Cliente</th>
+                                    <th>Ação Executada</th>
+                                </tr>
+                            </thead>
+                            <tbody id="listaHistCliente">
+                                <tr><td colspan="3" style="text-align:center;">Nenhum log encontrado.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid var(--borda-clara); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                <button class="btn-delete" style="background-color: var(--vermelho-alerta) !important; height: 38px;" onclick="limparAbaHistoricos()">⚠️ Limpar Tudo (Esvaziar Caixa e Logs)</button>
+                <div class="container-backup-botoes">
+                    <button class="btn-backup-cinza" onclick="exportarBackupJSON()">📥 Exportar JSON</button>
+                    <button class="btn-backup-cinza" onclick="document.getElementById('inputUploadBackup').click()">📤 Importar JSON</button>
+                    <button class="btn-backup-cinza" style="background-color: #15803d !important; border-color: #166534 !important;" onclick="exportarBackupExcelFormatado()">📊 Excel Formatado</button>
+                    <input type="file" id="inputUploadBackup" accept=".json" style="display: none;" onchange="importarBackupJSON(event)">
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="cupomImpressaoArea"></div>
+
+    <script>
+        // FUNÇÃO SUPER ROBUSTA DE PARSE DE DATA BR PARA COMPARAR TIMESTAMPS
+        // CORREÇÃO: Conserta a falha de cálculo retroativo ao filtrar datas no Histórico.
+        function parseDateBr(dateStr) {
+            if (!dateStr) return new Date(0);
+            
+            // Remove as vírgulas que alguns celulares/navegadores colocam entre a data e a hora (ex: 25/12/2025, 14:30)
+            const limpo = dateStr.replace(',', '');
+            const partes = limpo.split(' ');
+            
+            const dataPart = partes[0] || '';
+            const horaPart = partes[1] || '00:00:00';
+            
+            const dmy = dataPart.split('/');
+            if(dmy.length !== 3) return new Date(0); // Em caso de falha severa
+            
+            const d = dmy[0].padStart(2, '0');
+            const m = dmy[1].padStart(2, '0');
+            const y = dmy[2];
+            
+            return new Date(`${y}-${m}-${d}T${horaPart}`);
+        }
+
+        // Lógica de Mostrar Pagamento Duplo
+        window.mostrarPagamento2 = function() {
+            document.getElementById('bloco-pag2').style.display = 'grid';
+            atualizarTotalFinalPDV();
+        };
+
+        // MENU DO CAIXA
+        window.toggleMenuCaixa = function() {
+            const menu = document.getElementById('menuOpcoesCaixa');
+            if(menu.style.display === 'flex') {
+                menu.style.display = 'none';
+            } else {
+                menu.style.display = 'flex';
+            }
+        };
+
+        document.addEventListener('click', function(event) {
+            const menu = document.getElementById('menuOpcoesCaixa');
+            const btn = document.getElementById('btnToggleOpcoesCaixa');
+            if (menu && menu.style.display === 'flex') {
+                if (!menu.contains(event.target) && !btn.contains(event.target)) {
+                    menu.style.display = 'none';
+                }
+            }
+        });
+
+        // CONFIGURAÇÕES DE LOGIN E SESSÃO PERMANENTE
+        let usuarioAtivo = "";
+
+        function toggleVisibilidadeSenha() {
+            const campo = document.getElementById("loginSenha");
+            if (campo.type === "password") {
+                campo.type = "text";
+            } else {
+                campo.type = "password";
+            }
+        }
+
+        function verificarSessaoAtiva() {
+            const logadoLocal = localStorage.getItem("clsys_autenticado_user");
+            const logadoSession = sessionStorage.getItem("clsys_autenticado_user");
+
+            if (logadoLocal) {
+                usuarioAtivo = logadoLocal;
+                entrarNoPainel();
+            } else if (logadoSession) {
+                usuarioAtivo = logadoSession;
+                entrarNoPainel();
+            } else {
+                document.getElementById("telaBloqueioLogin").style.display = "flex";
+                document.getElementById("containerAppPrincipal").style.display = "none";
+            }
+        }
+
+        function autenticarUsuarioSistema() {
+            const usuarioInput = document.getElementById("loginUsuario").value;
+            const senhaInput = document.getElementById("loginSenha").value;
+            const msgErro = document.getElementById("msgErroLogin");
+            const keepConnected = document.getElementById("keepConnectedCheckbox").checked;
+
+            let logado = false;
+            if (usuarioInput === "admin" && senhaInput === "admin") {
+                usuarioAtivo = "admin";
+                logado = true;
+            } else if (usuarioInput === "operador" && senhaInput === "1234") {
+                usuarioAtivo = "operador";
+                logado = true;
+            }
+
+            if (logado) {
+                msgErro.style.display = "none";
+                if (keepConnected) {
+                    localStorage.setItem("clsys_autenticado_user", usuarioAtivo);
+                } else {
+                    sessionStorage.setItem("clsys_autenticado_user", usuarioAtivo);
+                }
+                
+                document.getElementById("loginSenha").value = "";
+                entrarNoPainel();
+            } else {
+                msgErro.style.display = "block";
+            }
+        }
+
+        function entrarNoPainel() {
+            document.getElementById("telaBloqueioLogin").style.display = "none";
+            document.getElementById("containerAppPrincipal").style.display = "block";
+            document.getElementById("labelNomeUsuario").innerText = `👤 Logado como: ${usuarioAtivo.toUpperCase()}`;
+            
+            aplicarPermissoesTelas();
+            aplicarTemaBrancoPDV();
+            atualizarInterfaceCaixa();
+            alternarAba('pdv');
+        }
+
+        function verificarLoginEnter(event) {
+            if (event.key === "Enter") {
+                autenticarUsuarioSistema();
+            }
+        }
+
+        function deslogarSistemaCLSys() {
+            localStorage.removeItem("clsys_autenticado_user");
+            sessionStorage.removeItem("clsys_autenticado_user");
+            usuarioAtivo = "";
+            document.getElementById("telaBloqueioLogin").style.display = "flex";
+            document.getElementById("containerAppPrincipal").style.display = "none";
+        }
+
+        // CARREGAMENTO DOS DADOS LOCAIS E CAIXA
+        window.produtos = JSON.parse(localStorage.getItem('cl_produtos')) || [];
+        window.servicos = JSON.parse(localStorage.getItem('cl_servicos')) || [];
+        window.clientes = JSON.parse(localStorage.getItem('cl_clientes')) || [];
+        window.insumos = JSON.parse(localStorage.getItem('cl_insumos')) || [];
+        window.historico = JSON.parse(localStorage.getItem('cl_historico')) || [];
+        window.logEstoque = JSON.parse(localStorage.getItem('cl_log_estoque')) || [];
+        window.logInsumos = JSON.parse(localStorage.getItem('cl_log_insumos')) || [];
+        window.logCliente = JSON.parse(localStorage.getItem('cl_log_cliente')) || [];
+
+        window.estadoCaixa = JSON.parse(localStorage.getItem('cl_estado_caixa')) || { aberto: false, saldoInicial: 0, dataAbertura: null };
+        window.sangrias = JSON.parse(localStorage.getItem('cl_sangrias')) || [];
+
+        window.taxaDebito = parseFloat(localStorage.getItem('cl_taxa_debito')) || 0;
+        
+        window.apiNfeUrl = localStorage.getItem('cl_api_nfe_url') || '';
+        window.apiNfeKey = localStorage.getItem('cl_api_nfe_key') || '';
+        window.temaBrancoPdv = JSON.parse(localStorage.getItem('cl_tema_branco_pdv')) || false;
+        
+        window.taxasCredito = JSON.parse(localStorage.getItem('cl_taxas_credito')) || Array(12).fill(0);
+        
+        window.permissoesOperador = JSON.parse(localStorage.getItem('cl_permissoes_operador')) || {
+            servicos: false,
+            estoque: false,
+            insumos: false,
+            clientes: false
+        };
+        
+        window.carrinho = [];
+        window.filtroEstoqueAtual = 'todos';
+        window.html5QrcodeScanner = null;
+
+        window.idEdicaoProduto = null;
+        window.idEdicaoServico = null;
+        window.idEdicaoInsumo = null;
+        window.idEdicaoCliente = null;
+
+        document.getElementById('configTaxaDebito').value = window.taxaDebito;
+        if(document.getElementById('apiNfeUrl')) document.getElementById('apiNfeUrl').value = window.apiNfeUrl;
+        if(document.getElementById('apiNfeKey')) document.getElementById('apiNfeKey').value = window.apiNfeKey;
+        if(document.getElementById('configTemaBrancoPDV')) document.getElementById('configTemaBrancoPDV').checked = window.temaBrancoPdv;
+
+        // FUNÇÃO DE IMPORTAÇÃO DE XML (NFe)
+        window.importarXMLNFe = function(event) {
+            const arquivo = event.target.files[0];
+            if (!arquivo) return;
+
+            const leitor = new FileReader();
+            leitor.onload = function(e) {
+                try {
+                    const parser = new DOMParser();
+                    const xmlDoc = parser.parseFromString(e.target.result, "text/xml");
+                    
+                    const itens = xmlDoc.getElementsByTagName("det");
+                    if (itens.length === 0) {
+                        alert("O arquivo não parece ser um XML de Nota Fiscal Eletrônica (NF-e) válido ou não contém produtos.");
+                        return;
+                    }
+
+                    let adicionados = 0;
+                    let atualizados = 0;
+
+                    for (let i = 0; i < itens.length; i++) {
+                        const prod = itens[i].getElementsByTagName("prod")[0];
+                        if (!prod) continue;
+
+                        const nomeStr = prod.getElementsByTagName("xProd")[0]?.textContent || "Produto Sem Nome";
+                        const ean = prod.getElementsByTagName("cEAN")[0]?.textContent || "";
+                        const codRef = prod.getElementsByTagName("cProd")[0]?.textContent || "";
+                        const codFinal = (ean !== "SEM GTIN" && ean !== "") ? ean : codRef;
+                        
+                        const ncm = prod.getElementsByTagName("NCM")[0]?.textContent || "";
+                        const cfop = prod.getElementsByTagName("CFOP")[0]?.textContent || "";
+                        const qtd = parseFloat(prod.getElementsByTagName("qCom")[0]?.textContent || 0);
+                        const unidade = prod.getElementsByTagName("uCom")[0]?.textContent || "un";
+                        const custo = parseFloat(prod.getElementsByTagName("vUnCom")[0]?.textContent || 0);
+
+                        let indexExistente = -1;
+                        if (codFinal && codFinal !== "SEM GTIN") {
+                            indexExistente = window.produtos.findIndex(p => p.codBarras === codFinal);
+                        } else {
+                            indexExistente = window.produtos.findIndex(p => p.nome.toUpperCase() === nomeStr.toUpperCase());
+                        }
+
+                        if (indexExistente !== -1) {
+                            window.produtos[indexExistente].qtd += qtd;
+                            window.produtos[indexExistente].custo = custo; 
+                            if(ncm) window.produtos[indexExistente].ncm = ncm;
+                            if(cfop) window.produtos[indexExistente].cfop = cfop;
+                            atualizados++;
+                            registrarLog('estoque', window.produtos[indexExistente].nome, `Entrada via XML: Adicionado ${qtd} ${unidade} (Custo e NCM atualizados).`);
+                        } else {
+                            window.produtos.push({
+                                nome: nomeStr,
+                                codBarras: codFinal,
+                                ncm: ncm,
+                                cfop: cfop,
+                                qtd: qtd,
+                                unidade: unidade.toLowerCase(),
+                                custo: custo,
+                                venda: custo * 1.5, 
+                                validade: ""
+                            });
+                            adicionados++;
+                            registrarLog('estoque', nomeStr, `Cadastro via XML: Criado com ${qtd} ${unidade}.`);
+                        }
+                    }
+
+                    atualizarLocalStorage();
+                    renderizerTabela();
+                    filtrarProdutosPDV('');
+                    
+                    alert(`Importação concluída com sucesso!\n\nProdutos Novos: ${adicionados}\nProdutos Atualizados: ${atualizados}`);
+
+                } catch (error) {
+                    console.error(error);
+                    alert("Erro ao ler o arquivo XML. Verifique se o formato está correto ou corrompido.");
+                }
+            };
+            leitor.readAsText(arquivo);
+            event.target.value = ''; 
+        }
+
+        // CONTROLE DE CAIXA
+        window.atualizarInterfaceCaixa = function() {
+            const painel = document.getElementById('painelCaixaPdv');
+            const titulo = document.getElementById('textoStatusCaixa');
+            const sub = document.getElementById('subTextoCaixa');
+            const icone = document.getElementById('iconeStatusCaixa');
+            const btnInserir = document.getElementById('btnInserirCarrinho');
+            const btnConcluir = document.getElementById('btnConcluirVenda');
+
+            const blocoAbertura = document.getElementById('blocoAberturaCaixa');
+            const blocoOpcoes = document.getElementById('blocoOpcoesCaixaAberto');
+            const menuOpcoes = document.getElementById('menuOpcoesCaixa');
+            const btnSangria = document.getElementById('btnSangria');
+
+            if(window.estadoCaixa.aberto) {
+                painel.style.background = 'transparent';
+                painel.style.borderColor = 'var(--borda-clara)';
+                if(document.body.classList.contains('modo-visual-pdv')) {
+                    painel.style.borderColor = 'var(--borda-pdv)';
+                }
+                
+                icone.style.backgroundColor = '#10b981';
+                titulo.style.color = '#10b981';
+                titulo.innerText = 'Caixa Aberto';
+                
+                let horario = window.estadoCaixa.dataAbertura;
+                if(horario.includes(' ')) { horario = horario.split(' ')[1]; }
+                
+                sub.innerText = `Aberto às ${horario}`;
+                
+                blocoAbertura.style.display = 'none';
+                blocoOpcoes.style.display = 'block';
+                menuOpcoes.style.display = 'none'; 
+
+                if(usuarioAtivo === 'admin') {
+                    btnSangria.style.display = 'block';
+                } else {
+                    btnSangria.style.display = 'none';
+                }
+
+                if(btnInserir) btnInserir.disabled = false;
+                if(btnConcluir) btnConcluir.disabled = false;
+            } else {
+                painel.style.background = 'rgba(239, 68, 68, 0.05)';
+                painel.style.borderColor = '#ef4444';
+                icone.style.backgroundColor = '#ef4444';
+                titulo.style.color = '#ef4444';
+                titulo.innerText = 'Caixa Fechado';
+                sub.innerText = 'Informe o troco e abra o caixa';
+                
+                blocoAbertura.style.display = 'flex';
+                blocoOpcoes.style.display = 'none';
+                document.getElementById('valorTrocoInicial').value = '';
+
+                if(btnInserir) btnInserir.disabled = true;
+                if(btnConcluir) btnConcluir.disabled = true;
+            }
+            calcularDashboardERenderizarHistorico();
+       }
+
+       window.alternarStatusCaixa = function() {
+           if(window.estadoCaixa.aberto) {
+               if(confirm("Deseja realmente FECHAR o caixa agora? Isso irá resetar o controle de vendas deste turno.")) {
+                   window.historico.unshift({
+                       isLogCaixa: true,
+                       acao: 'Fechamento',
+                       data: new Date().toLocaleString('pt-BR')
+                   });
+                   
+                   window.estadoCaixa = { aberto: false, saldoInicial: 0, dataAbertura: null };
+                   atualizarLocalStorage();
+                   atualizarInterfaceCaixa();
+               }
+           } else {
+               const troco = parseFloat(document.getElementById('valorTrocoInicial').value) || 0;
+               const dataStr = new Date().toLocaleString('pt-BR');
+               window.estadoCaixa = {
+                   aberto: true,
+                   saldoInicial: troco,
+                   dataAbertura: dataStr
+               };
+               
+               window.historico.unshift({
+                   isLogCaixa: true,
+                   acao: 'Abertura',
+                   data: dataStr,
+                   valorTroco: troco
+               });
+               
+               atualizarLocalStorage();
+               atualizarInterfaceCaixa();
+           }
+       }
+
+       window.fazerSangria = function() {
+           if(!window.estadoCaixa.aberto) return;
+           if(usuarioAtivo !== 'admin') {
+               alert("Acesso Negado: Apenas o Administrador pode realizar Sangrias.");
+               return;
+           }
+
+           const valorStr = prompt("💸 Informe o VALOR da Retirada (Sangria):");
+           if(!valorStr) return;
+           const valor = parseFloat(valorStr.replace(',','.'));
+           if(isNaN(valor) || valor <= 0) { alert("Valor inválido!"); return; }
+
+           const motivo = prompt("📝 Qual o MOTIVO da retirada?");
+           if(!motivo) return;
+
+           const sangria = {
+               data: new Date().toLocaleString('pt-BR'),
+               valor: valor,
+               motivo: motivo
+           };
+           window.sangrias.unshift(sangria);
+           atualizarLocalStorage();
+           alert(`Sangria de R$ ${valor.toFixed(2)} registrada com sucesso!`);
+           window.toggleMenuCaixa();
+           calcularDashboardERenderizarHistorico();
+       }
+
+       window.editarSangria = function(idx) {
+            if(usuarioAtivo !== 'admin') {
+                alert("Acesso Negado: Apenas o Administrador pode editar Sangrias.");
+                return;
+            }
+            const s = window.sangrias[idx];
+            const novoValor = prompt("Editar Valor da Sangria (R$):", s.valor);
+            if(novoValor === null) return;
+            const valorParsed = parseFloat(novoValor.replace(',','.'));
+            if(isNaN(valorParsed) || valorParsed <= 0) { alert("Valor inválido!"); return; }
+
+            const novoMotivo = prompt("Editar Motivo da Retirada:", s.motivo);
+            if(novoMotivo === null) return;
+
+            window.sangrias[idx].valor = valorParsed;
+            window.sangrias[idx].motivo = novoMotivo;
+            atualizarLocalStorage();
+            calcularDashboardERenderizarHistorico();
+            alert("Sangria atualizada com sucesso!");
+        }
+
+        window.excluirSangria = function(idx) {
+            if(usuarioAtivo !== 'admin') {
+                alert("Acesso Negado: Apenas o Administrador pode excluir Sangrias.");
+                return;
+            }
+            if(confirm("Excluir permanentemente este registro de sangria? O valor voltará a constar no caixa geral.")) {
+                window.sangrias.splice(idx, 1);
+                atualizarLocalStorage();
+                calcularDashboardERenderizarHistorico();
+            }
+        }
+
+
+        window.salvarConfigNFe = function() {
+            window.apiNfeUrl = document.getElementById('apiNfeUrl').value;
+            window.apiNfeKey = document.getElementById('apiNfeKey').value;
+            localStorage.setItem('cl_api_nfe_url', window.apiNfeUrl);
+            localStorage.setItem('cl_api_nfe_key', window.apiNfeKey);
+            if (typeof window.salvarDadosNaNuvem === "function") window.salvarDadosNaNuvem();
+        }
+
+        window.salvarConfigTemaPdv = function() {
+            window.temaBrancoPdv = document.getElementById('configTemaBrancoPDV').checked;
+            localStorage.setItem('cl_tema_branco_pdv', JSON.stringify(window.temaBrancoPdv));
+            aplicarTemaBrancoPDV();
+            if (typeof window.salvarDadosNaNuvem === "function") window.salvarDadosNaNuvem();
+        }
+
+        window.aplicarTemaBrancoPDV = function() {
+            const pdvAtivo = document.getElementById('aba-pdv').classList.contains('ativa');
+            if (pdvAtivo) {
+                if (window.temaBrancoPdv) {
+                    document.body.classList.remove('modo-visual-pdv');
+                } else {
+                    document.body.classList.add('modo-visual-pdv');
+                }
+            }
+        }
+
+        function renderizarGradeTaxas() {
+            const grade = document.getElementById("gradeTaxasCredito");
+            grade.innerHTML = "";
+            for (let i = 1; i <= 12; i++) {
+                const taxaValue = window.taxasCredito[i - 1] || 0;
+                grade.innerHTML += `
+                    <div class="taxa-card-individual">
+                        <label>${i}x</label>
+                        <input type="number" step="0.01" value="${taxaValue}" id="taxaCredito-${i}" oninput="salvarTaxasConfig(); atualizarTotalFinalPDV()">
+                    </div>
+                `;
+            }
+        }
+
+        function carregarChecksPermissoes() {
+            document.getElementById('perm-servicos').checked = window.permissoesOperador.servicos;
+            document.getElementById('perm-estoque').checked = window.permissoesOperador.estoque;
+            document.getElementById('perm-insumos').checked = window.permissoesOperador.insumos;
+            document.getElementById('perm-clientes').checked = window.permissoesOperador.clientes;
+        }
+
+        function aplicarPermissoesTelas() {
+            const triggers = {
+                servicos: document.getElementById('aba-servicos-trigger'),
+                estoque: document.getElementById('aba-estoque-trigger'),
+                insumos: document.getElementById('aba-insumos-trigger'),
+                clientes: document.getElementById('aba-clientes-trigger'),
+                historico: document.getElementById('aba-historico-trigger')
+            };
+
+            if (usuarioAtivo === 'operador') {
+                triggers.servicos.style.display = window.permissoesOperador.servicos ? "block" : "none";
+                triggers.estoque.style.display = window.permissoesOperador.estoque ? "block" : "none";
+                triggers.insumos.style.display = window.permissoesOperador.insumos ? "block" : "none";
+                triggers.clientes.style.display = window.permissoesOperador.clientes ? "block" : "none";
+                triggers.historico.style.display = "none";
+            } else {
+                for (let key in triggers) {
+                    triggers[key].style.display = "block";
+                }
+            }
+        }
+
+        window.salvarPermissoes = function() {
+            window.permissoesOperador.servicos = document.getElementById('perm-servicos').checked;
+            window.permissoesOperador.estoque = document.getElementById('perm-estoque').checked;
+            window.permissoesOperador.insumos = document.getElementById('perm-insumos').checked;
+            window.permissoesOperador.clientes = document.getElementById('perm-clientes').checked;
+
+            localStorage.setItem('cl_permissoes_operador', JSON.stringify(window.permissoesOperador));
+            aplicarPermissoesTelas();
+        }
+
+        function atualizarLocalStorage() {
+            localStorage.setItem('cl_produtos', JSON.stringify(window.produtos));
+            localStorage.setItem('cl_servicos', JSON.stringify(window.servicos));
+            localStorage.setItem('cl_clientes', JSON.stringify(window.clientes));
+            localStorage.setItem('cl_insumos', JSON.stringify(window.insumos));
+            localStorage.setItem('cl_historico', JSON.stringify(window.historico));
+            localStorage.setItem('cl_log_estoque', JSON.stringify(window.logEstoque));
+            localStorage.setItem('cl_log_insumos', JSON.stringify(window.logInsumos));
+            localStorage.setItem('cl_log_cliente', JSON.stringify(window.logCliente));
+            localStorage.setItem('cl_estado_caixa', JSON.stringify(window.estadoCaixa));
+            localStorage.setItem('cl_sangrias', JSON.stringify(window.sangrias));
+
+            if (typeof window.salvarDadosNaNuvem === "function") {
+                window.salvarDadosNaNuvem();
+            }
+        }
+
+        window.salvarTaxasConfig = function() {
+            window.taxaDebito = parseFloat(document.getElementById('configTaxaDebito').value) || 0;
+            localStorage.setItem('cl_taxa_debito', window.taxaDebito);
+
+            for (let i = 1; i <= 12; i++) {
+                const valorInput = parseFloat(document.getElementById(`taxaCredito-${i}`).value) || 0;
+                window.taxasCredito[i - 1] = valorInput;
+            }
+            localStorage.setItem('cl_taxas_credito', JSON.stringify(window.taxasCredito));
+
+            if (typeof window.salvarDadosNaNuvem === "function") {
+                window.salvarDadosNaNuvem();
+            }
+        }
+
+        function registrarLog(tipo, identificador, acao) {
+            const agora = new Date().toLocaleString('pt-BR');
+            const novoLog = { data: agora, item: identificador, msg: acao };
+
+            if (tipo === 'estoque') {
+                window.logEstoque.unshift(novoLog);
+            } else if (tipo === 'insumos') {
+                window.logInsumos.unshift(novoLog);
+            } else if (tipo === 'cliente') {
+                window.logCliente.unshift(novoLog);
+            }
+            atualizarLocalStorage();
+            renderizarLogsTabelas();
+        }
+
+        window.alternarAba = function (abaId) {
+            if (usuarioAtivo === 'operador') {
+                if (abaId === 'historico' || (abaId !== 'pdv' && !window.permissoesOperador[abaId])) {
+                    alert("Acesso negado! Tela bloqueada pelo administrador.");
+                    return;
+                }
+            }
+
+            document.querySelectorAll('.aba-conteudo').forEach(el => el.classList.remove('ativa'));
+            document.querySelectorAll('.aba-btn').forEach(el => el.classList.remove('ativa'));
+
+            document.getElementById(`aba-${abaId}`).classList.add('ativa');
+            document.getElementById(`aba-${abaId}-trigger`).classList.add('ativa');
+
+            if (abaId === 'pdv') {
+                if (!window.temaBrancoPdv) {
+                    document.body.classList.add('modo-visual-pdv');
+                } else {
+                    document.body.classList.remove('modo-visual-pdv');
+                }
+                document.getElementById('pdvCodBarras').focus();
+            } else {
+                document.body.classList.remove('modo-visual-pdv');
+            }
+
+            if (abaId === 'historico') {
+                calcularDashboardERenderizarHistorico();
+            }
+        }
+
+        window.alternarSubHistorico = function(subAbaId) {
+            document.querySelectorAll('.sub-hist-conteudo').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.sub-aba-btn').forEach(el => el.classList.remove('ativa'));
+
+            document.getElementById(`sub-hist-${subAbaId}`).style.display = 'block';
+            document.getElementById(`sub-aba-${subAbaId}`).classList.add('ativa');
+        }
+
+        window.adicionarProduto = function () {
+            const nome = document.getElementById('nomeProduto').value.trim();
+            const codBarras = document.getElementById('codBarrasProduto').value.trim();
+            const ncm = document.getElementById('ncmProduto').value.trim();
+            const cfop = document.getElementById('cfopProduto').value.trim();
+            const qtd = parseFloat(document.getElementById('qtdProduto').value) || 0;
+            const unidad = document.getElementById('unidadeMedida').value;
+            const custo = parseFloat(document.getElementById('precoCompra').value) || 0;
+            const venda = parseFloat(document.getElementById('precoVenda').value) || 0;
+            const validade = document.getElementById('dataValidade').value;
+
+            if (!nome) { alert("Informe o nome do produto!"); return; }
+
+            if (window.idEdicaoProduto !== null) {
+                window.produtos[window.idEdicaoProduto] = { nome, codBarras, ncm, cfop, qtd, unidade: unidad, custo, venda, validade };
+                window.idEdicaoProduto = null;
+                document.getElementById('btnSalvar').innerText = "Salvar";
+                document.getElementById('btnCancelar').style.display = "none";
+            } else {
+                window.produtos.push({ nome, codBarras, ncm, cfop, qtd, unidade: unidad, custo, venda, validade });
+                registrarLog('estoque', nome, `Cadastro Inicial: Adicionado item com saldo inicial de ${qtd} ${unidad}.`);
+            }
+
+            atualizarLocalStorage();
+            limparFormProduto();
+            renderizerTabela();
+            filtrarProdutosPDV('');
+        }
+
+        function limparFormProduto() {
+            document.getElementById('nomeProduto').value = '';
+            document.getElementById('codBarrasProduto').value = '';
+            document.getElementById('ncmProduto').value = '';
+            document.getElementById('cfopProduto').value = '';
+            document.getElementById('qtdProduto').value = '';
+            document.getElementById('precoCompra').value = '';
+            document.getElementById('precoVenda').value = '';
+            document.getElementById('dataValidade').value = '';
+        }
+
+        window.cancelarEdicao = function () {
+            window.idEdicaoProduto = null;
+            document.getElementById('btnSalvar').innerText = "Salvar";
+            document.getElementById('btnCancelar').style.display = "none";
+            limparFormProduto();
+        }
+
+        window.editarProduto = function (index) {
+            const p = window.produtos[index];
+            window.idEdicaoProduto = index;
+            document.getElementById('nomeProduto').value = p.nome;
+            document.getElementById('codBarrasProduto').value = p.codBarras || '';
+            document.getElementById('ncmProduto').value = p.ncm || '';
+            document.getElementById('cfopProduto').value = p.cfop || '';
+            document.getElementById('qtdProduto').value = p.qtd;
+            document.getElementById('unidadeMedida').value = p.unidade;
+            document.getElementById('precoCompra').value = p.custo;
+            document.getElementById('precoVenda').value = p.venda;
+            document.getElementById('dataValidade').value = p.validade || '';
+
+            document.getElementById('btnSalvar').innerText = "Atualizar";
+            document.getElementById('btnCancelar').style.display = "inline-block";
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        window.removerProduto = function (index) {
+            if (confirm(`Remover permanentemente o produto "${window.produtos[index].nome}"?`)) {
+                registrarLog('estoque', window.produtos[index].nome, `Excluído: Item removido permanentemente.`);
+                window.produtos.splice(index, 1);
+                atualizarLocalStorage();
+                renderizerTabela();
+                filtrarProdutosPDV('');
+            }
+        }
+
+        window.ajustarSaldoRapido = function (index, fator) {
+            const p = window.produtos[index];
+            const valorAjuste = 1;
+            p.qtd = parseFloat((p.qtd + valorAjuste * fator).toFixed(3));
+            if (p.qtd < 0) p.qtd = 0;
+
+            registrarLog('estoque', p.nome, `Ajuste Rápido de Saldo: ${fator > 0 ? 'Adicionado' : 'Removido'} para o total atual de ${p.qtd} ${p.unidade}.`);
+            atualizarLocalStorage();
+            renderizerTabela();
+            filtrarProdutosPDV('');
+        }
+
+        window.mudarFiltro = function (tipo) {
+            window.filtroEstoqueAtual = tipo;
+            document.querySelectorAll('.btn-filtro').forEach(b => b.classList.remove('ativo'));
+            document.getElementById(`filtro-${tipo === 'vencidos' ? 'vencidos' : tipo === 'baixo' ? 'baixo' : 'todos'}`).classList.add('ativo');
+            renderizerTabela();
+        }
+
+        window.renderizerTabela = function () {
+            const termo = document.getElementById('inputBusca').value.toLowerCase();
+            const tbodyDesktop = document.getElementById('listaEstoqueDesktop');
+            const containerMobile = document.getElementById('listaEstoqueMobile');
+
+            if (!tbodyDesktop || !containerMobile) return;
+
+            tbodyDesktop.innerHTML = '';
+            containerMobile.innerHTML = '';
+
+            const hoje = new Date();
+
+            let itensFiltrados = window.produtos.map((p, idx) => ({ ...p, originalIdx: idx }));
+
+            if (termo) {
+                itensFiltrados = itensFiltrados.filter(p => p.nome.toLowerCase().includes(termo) || (p.codBarras && p.codBarras.includes(termo)));
+            }
+
+            if (window.filtroEstoqueAtual === 'baixo') {
+                itensFiltrados = itensFiltrados.filter(p => p.qtd <= 5);
+            } else if (window.filtroEstoqueAtual === 'vencidos') {
+                itensFiltrados = itensFiltrados.filter(p => {
+                    if (!p.validade) return false;
+                    const diffTime = new Date(p.validade) - hoje;
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    return diffDays <= 15;
+                });
+            }
+
+            if (itensFiltrados.length === 0) {
+                tbodyDesktop.innerHTML = '<tr><td colspan="8" style="text-align:center;">Nenhum produto atende aos filtros.</td></tr>';
+                containerMobile.innerHTML = '<div style="text-align:center; color:#64748b; padding:10px;">Nenhum produto encontrado.</div>';
+                return;
+            }
+
+            itensFiltrados.forEach(p => {
+                let classeAlerta = '';
+                let badgeValidade = '<span class="badge-validade bv-ok">Ok</span>';
+
+                if (p.qtd <= 5) classeAlerta = 'estoque-baixo';
+
+                if (p.validade) {
+                    const diffTime = new Date(p.validade) - hoje;
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    if (diffDays < 0) {
+                        classeAlerta = 'produto-vencido';
+                        badgeValidade = `<span class="badge-validade bv-vencido">Vencido (${Math.abs(diffDays)}d)</span>`;
+                    } else if (diffDays <= 15) {
+                        classeAlerta = 'produto-quase-vencido';
+                        badgeValidade = `<span class="badge-validade bv-quase">Crítico (${diffDays}d)</span>`;
+                    }
+                }
+
+                const margemUn = p.venda - p.custo;
+
+                const tr = document.createElement('tr');
+                tr.className = classeAlerta;
+                
+                // CORREÇÃO: Div flex para manter a data de validade e o botão lado a lado perfeitos
+                tr.innerHTML = `
+                    <td><strong>${p.nome}</strong><br><small style="color:#64748b;">${p.codBarras || 'Sem Cód'}</small></td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <span style="font-weight: 500; min-width: 70px;">${p.validade ? p.validade.split('-').reverse().join('/') : '-'}</span>
+                            ${badgeValidade}
+                        </div>
+                    </td>
+                    <td><small>NCM: ${p.ncm || '-'}<br>CFOP: ${p.cfop || '-'}</small></td>
+                    <td><strong>${p.qtd}</strong> <small>${p.unidade}</small></td>
+                    <td>R$ ${p.custo.toFixed(2)}</td>
+                    <td>R$ ${p.venda.toFixed(2)}</td>
+                    <td style="color:${margemUn >= 0 ? 'var(--verde-sucesso)' : 'var(--vermelho-alerta)'}">R$ ${margemUn.toFixed(2)}</td>
+                    <td style="display: flex; gap: 4px; justify-content: center; align-items: center;">
+                        <button class="btn-action btn-add" style="padding: 4px 8px;" onclick="ajustarSaldoRapido(${p.originalIdx}, 1)">+</button>
+                        <button class="btn-action btn-edit" style="padding: 4px 8px; margin-right: 4px;" onclick="ajustarSaldoRapido(${p.originalIdx}, -1)">-</button>
+                        <button class="btn-action btn-edit" style="padding: 4px 8px;" onclick="editarProduto(${p.originalIdx})">✏️</button>
+                        <button class="btn-delete" style="padding: 4px 8px;" onclick="removerProduto(${p.originalIdx})">X</button>
+                    </td>
+                `;
+                tbodyDesktop.appendChild(tr);
+
+                const div = document.createElement('div');
+                div.className = `card-produto-mobile ${classeAlerta}`;
+                div.innerHTML = `
+                    <div class="linha-card-mobile"><strong>${p.nome}</strong> <span>${badgeValidade}</span></div>
+                    <div class="linha-card-mobile"><small>${p.codBarras || 'Sem Cód'}</small> <span>Estoque: <strong>${p.qtd} ${p.unidade}</strong></span></div>
+                    <div class="linha-card-mobile"><span>Preço: R$ ${p.venda.toFixed(2)}</span></div>
+                    <div style="display:flex; justify-content:flex-end; gap:5px; margin-top:5px;">
+                        <button class="btn-action btn-add" style="padding:4px 10px;" onclick="ajustarSaldoRapido(${p.originalIdx}, 1)">+</button>
+                        <button class="btn-action btn-edit" style="padding:4px 10px;" onclick="ajustarSaldoRapido(${p.originalIdx}, -1)">-</button>
+                        <button class="btn-action btn-edit" style="padding:4px 10px;" onclick="editarProduto(${p.originalIdx})">Editar</button>
+                        <button class="btn-delete" style="padding:4px 10px;" onclick="removerProduto(${p.originalIdx})">Remover</button>
+                    </div>
+                `;
+                containerMobile.appendChild(div);
+            });
+        }
+
+        window.adicionarServico = function () {
+            const nome = document.getElementById('nomeServico').value.trim();
+            const ncm = document.getElementById('ncmServico').value.trim();
+            const cfop = document.getElementById('cfopServico').value.trim();
+            const preco = parseFloat(document.getElementById('precoServico').value) || 0;
+
+            if (!nome) { alert("Informe o nome do serviço!"); return; }
+
+            if (window.idEdicaoServico !== null) {
+                window.servicos[window.idEdicaoServico] = { nome, ncm, cfop, preco };
+                window.idEdicaoServico = null;
+                document.getElementById('btnSalvarServico').innerText = "Salvar Serviço";
+                document.getElementById('btnCancelarServico').style.display = "none";
+            } else {
+                window.servicos.push({ nome, ncm, cfop, preco });
+            }
+
+            atualizarLocalStorage();
+            document.getElementById('nomeServico').value = '';
+            document.getElementById('ncmServico').value = '';
+            document.getElementById('cfopServico').value = '';
+            document.getElementById('precoServico').value = '';
+            renderizarServicos();
+            filtrarProdutosPDV('');
+        }
+
+        window.editarServico = function (index) {
+            window.idEdicaoServico = index;
+            const s = window.servicos[index];
+            document.getElementById('nomeServico').value = s.nome;
+            document.getElementById('ncmServico').value = s.ncm || '';
+            document.getElementById('cfopServico').value = s.cfop || '';
+            document.getElementById('precoServico').value = s.preco;
+            document.getElementById('btnSalvarServico').innerText = "Atualizar";
+            document.getElementById('btnCancelarServico').style.display = "inline-block";
+        }
+
+        window.cancelarEdicaoServico = function () {
+            window.idEdicaoServico = null;
+            document.getElementById('btnSalvarServico').innerText = "Salvar Serviço";
+            document.getElementById('btnCancelarServico').style.display = "none";
+            document.getElementById('nomeServico').value = '';
+            document.getElementById('ncmServico').value = '';
+            document.getElementById('cfopServico').value = '';
+            document.getElementById('precoServico').value = '';
+        }
+
+        window.removerServico = function (index) {
+            if (confirm("Excluir este serviço?")) {
+                window.servicos.splice(index, 1);
+                atualizarLocalStorage();
+                renderizarServicos();
+                filtrarProdutosPDV('');
+            }
+        }
+
+        window.renderizarServicos = function () {
+            const tbody = document.getElementById('listaServicos');
+            const termoBusca = document.getElementById('filtroServicos')?.value.toLowerCase() || '';
+
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            
+            let servicosFiltrados = window.servicos.map((s, idx) => ({ ...s, originalIdx: idx }));
+            if (termoBusca) {
+                servicosFiltrados = servicosFiltrados.filter(s => s.nome.toLowerCase().includes(termoBusca));
+            }
+
+            if (servicosFiltrados.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Nenhum serviço correspondente encontrado.</td></tr>';
+                return;
+            }
+            
+            servicosFiltrados.forEach((s) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${s.nome}</strong></td>
+                    <td><small>NCM: ${s.ncm || '-'}<br>CFOP: ${s.cfop || '-'}</small></td>
+                    <td>R$ ${s.preco.toFixed(2)}</td>
+                    <td>
+                        <button class="btn-action btn-edit" onclick="editarServico(${s.originalIdx})">✏️</button>
+                        <button class="btn-delete" onclick="removerServico(${s.originalIdx})">X</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        window.adicionarCliente = function () {
+            const nome = document.getElementById('nomeCliente').value.trim();
+            const telf = document.getElementById('telefoneCliente').value.trim();
+            const obs = document.getElementById('observacoesCliente').value.trim();
+
+            if (!nome) { alert("Nome do cliente obrigatório!"); return; }
+
+            if (window.idEdicaoCliente !== null) {
+                window.clientes[window.idEdicaoCliente] = { nome, telf, obs };
+                registrarLog('cliente', nome, `Editado: Informações cadastradas atualizadas.`);
+                window.idEdicaoCliente = null;
+                document.getElementById('btnSalvarCliente').innerText = "Salvar Cliente";
+                document.getElementById('btnCancelarCliente').style.display = "none";
+            } else {
+                window.clientes.push({ nome, telf, obs });
+                registrarLog('cliente', nome, `Cadastro: Novo cliente adicionado.`);
+            }
+
+            atualizarLocalStorage();
+            document.getElementById('nomeCliente').value = '';
+            document.getElementById('telefoneCliente').value = '';
+            document.getElementById('observacoesCliente').value = '';
+            renderizarClientes();
+            atualizarSelectClientesPDV();
+        }
+
+        window.editarCliente = function (index) {
+            window.idEdicaoCliente = index;
+            const c = window.clientes[index];
+            document.getElementById('nomeCliente').value = c.nome;
+            document.getElementById('telefoneCliente').value = c.telf;
+            document.getElementById('observacoesCliente').value = c.obs;
+            document.getElementById('btnSalvarCliente').innerText = "Atualizar";
+            document.getElementById('btnCancelarCliente').style.display = "inline-block";
+        }
+
+        window.cancelarEdicaoCliente = function () {
+            window.idEdicaoCliente = null;
+            document.getElementById('btnSalvarCliente').innerText = "Salvar Cliente";
+            document.getElementById('btnCancelarCliente').style.display = "none";
+            document.getElementById('nomeCliente').value = '';
+            document.getElementById('telefoneCliente').value = '';
+            document.getElementById('observacoesCliente').value = '';
+        }
+
+        window.removerCliente = function (index) {
+            if (confirm("Remover cliente?")) {
+                registrarLog('cliente', window.clientes[index].nome, `Excluído: Registro deletado.`);
+                window.clientes.splice(index, 1);
+                atualizarLocalStorage();
+                renderizarClientes();
+                atualizarSelectClientesPDV();
+            }
+        }
+
+        window.renderizarClientes = function () {
+            const tbody = document.getElementById('listaClientesCorpo');
+            const termoBusca = document.getElementById('filtroClientes')?.value.toLowerCase() || '';
+
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            
+            let clientesFiltrados = window.clientes.map((c, idx) => ({ ...c, originalIdx: idx }));
+            if(termoBusca) {
+                clientesFiltrados = clientesFiltrados.filter(c => c.nome.toLowerCase().includes(termoBusca) || c.telf.includes(termoBusca));
+            }
+
+            if (clientesFiltrados.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Nenhum cliente correspondente encontrado.</td></tr>';
+                return;
+            }
+            clientesFiltrados.forEach((c) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${c.nome}</strong></td>
+                    <td>${c.telf || '-'}</td>
+                    <td><small>${c.obs || '-'}</small></td>
+                    <td>
+                        <button class="btn-action btn-edit" onclick="editarCliente(${c.originalIdx})">✏️</button>
+                        <button class="btn-delete" onclick="removerCliente(${c.originalIdx})">X</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function atualizarSelectClientesPDV() {
+            const select = document.getElementById('pdvSelecaoCliente');
+            if (!select) return;
+            select.innerHTML = '<option value="">Consumidor Final (Não identificado)</option>';
+            window.clientes.forEach(c => {
+                select.innerHTML += `<option value="${c.nome}">${c.nome}</option>`;
+            });
+        }
+
+        window.lancarGastoInsumo = function () {
+            const desc = document.getElementById('insumoDescricao').value.trim();
+            const valor = parseFloat(document.getElementById('insumoValor').value) || 0;
+            const vinculo = document.getElementById('insumoProdutoVinculo').value;
+
+            if (!desc || valor <= 0) { alert("Informe descrição e valor válidos!"); return; }
+
+            const agora = new Date().toLocaleString('pt-BR');
+
+            if (window.idEdicaoInsumo !== null) {
+                window.insumos[window.idEdicaoInsumo] = { data: agora, desc, valor, vinculo };
+                registrarLog('insumos', desc, `Editado: Custo reajustado para R$ ${valor.toFixed(2)}.`);
+                window.idEdicaoInsumo = null;
+                document.getElementById('btnSalvarInsumo').innerText = "Salvar Insumo";
+                document.getElementById('btnCancelarInsumo').style.display = "none";
+            } else {
+                window.insumos.push({ data: agora, desc, valor, vinculo });
+                registrarLog('insumos', desc, `Lançamento: Despesa/gasto cadastrado no valor de R$ ${valor.toFixed(2)}.`);
+            }
+
+            atualizarLocalStorage();
+            document.getElementById('insumoDescricao').value = '';
+            document.getElementById('insumoValor').value = '';
+            document.getElementById('insumoProdutoVinculo').value = '';
+            renderizarInsumos();
+        }
+
+        window.editarInsumo = function (index) {
+            window.idEdicaoInsumo = index;
+            const i = window.insumos[index];
+            document.getElementById('insumoDescricao').value = i.desc;
+            document.getElementById('insumoValor').value = i.valor;
+            document.getElementById('insumoProdutoVinculo').value = i.vinculo;
+            document.getElementById('btnSalvarInsumo').innerText = "Atualizar";
+            document.getElementById('btnCancelarInsumo').style.display = "inline-block";
+        }
+
+        window.cancelarEdicaoInsumo = function () {
+            window.idEdicaoInsumo = null;
+            document.getElementById('btnSalvarInsumo').innerText = "Salvar Insumo";
+            document.getElementById('btnCancelarInsumo').style.display = "none";
+            document.getElementById('insumoDescricao').value = '';
+            document.getElementById('insumoValor').value = '';
+            document.getElementById('insumoProdutoVinculo').value = '';
+        }
+
+        window.removerInsumo = function (index) {
+            if (confirm("Remover este insumo?")) {
+                registrarLog('insumos', window.insumos[index].desc, `Excluído: Lançamento de despesa cancelado.`);
+                window.insumos.splice(index, 1);
+                atualizarLocalStorage();
+                renderizarInsumos();
+            }
+        }
+
+        window.renderizarInsumos = function () {
+            const tbody = document.getElementById('listaInsumosCorpo');
+            const selectVinculo = document.getElementById('insumoProdutoVinculo');
+            const termoBusca = document.getElementById('filtroInsumos')?.value.toLowerCase() || '';
+
+            if (!tbody || !selectVinculo) return;
+
+            tbody.innerHTML = '';
+            selectVinculo.innerHTML = '<option value="">Vincular Item (Opcional)</option>';
+
+            window.produtos.forEach(p => {
+                selectVinculo.innerHTML += `<option value="PROD:${p.nome}">Produto: ${p.nome}</option>`;
+            });
+            window.servicos.forEach(s => {
+                selectVinculo.innerHTML += `<option value="SERV:${s.nome}">Serviço: ${s.nome}</option>`;
+            });
+
+            let insumosFiltrados = window.insumos.map((i, idx) => ({ ...i, originalIdx: idx }));
+            if(termoBusca) {
+                insumosFiltrados = insumosFiltrados.filter(i => i.desc.toLowerCase().includes(termoBusca) || (i.vinculo && i.vinculo.toLowerCase().includes(termoBusca)));
+            }
+
+            if (insumosFiltrados.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Nenhum gasto correspondente.</td></tr>';
+                return;
+            }
+
+            insumosFiltrados.forEach((i) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${i.data.split(' ')[0]}</td>
+                    <td><strong>${i.desc}</strong></td>
+                    <td><small>${i.vinculo ? i.vinculo.split(':')[1] : 'Operação Geral'}</small></td>
+                    <td>R$ ${i.valor.toFixed(2)}</td>
+                    <td>
+                        <button class="btn-action btn-edit" onclick="editarInsumo(${i.originalIdx})">✏️</button>
+                        <button class="btn-delete" onclick="removerInsumo(${i.originalIdx})">X</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+        
+        window.verificarParcelamento = function() {
+            const f1 = document.getElementById('pdvFormaPagamento').value;
+            const f2El = document.getElementById('pdvFormaPagamento2');
+            const f2 = (f2El && document.getElementById('bloco-pag2').style.display !== 'none') ? f2El.value : '';
+            
+            const divParcelas = document.getElementById('divParcelas');
+            if (f1 === 'Cartão de Crédito' || f2 === 'Cartão de Crédito') {
+                divParcelas.style.display = 'block';
+            } else {
+                divParcelas.style.display = 'none';
+                document.getElementById('pdvParcelas').value = '1x';
+            }
+        }
+
+        window.atualizarTotalFinalPDV = function() {
+            let subtotal = 0;
+            window.carrinho.forEach(c => {
+                subtotal += (c.preco * c.qtd);
+            });
+
+            const f1 = document.getElementById('pdvFormaPagamento').value;
+            const usaPag2 = document.getElementById('bloco-pag2').style.display !== 'none';
+            const f2 = usaPag2 ? document.getElementById('pdvFormaPagamento2').value : '';
+            const formas = [f1];
+            if(usaPag2) formas.push(f2);
+
+            let taxaPercent = 0;
+            if (formas.includes('Cartão de Crédito')) {
+                const parcelasSelect = document.getElementById('pdvParcelas').value;
+                const numeroParcela = parseInt(parcelasSelect) || 1;
+                taxaPercent = parseFloat(window.taxasCredito[numeroParcela - 1]) || 0;
+            } else if (formas.includes('Cartão de Débito')) {
+                taxaPercent = parseFloat(document.getElementById('configTaxaDebito').value) || 0;
+            }
+
+            const descontoPercent = parseFloat(document.getElementById('pdvDesconto').value) || 0;
+            const valorDesconto = subtotal * (descontoPercent / 100);
+
+            let totalFinal = subtotal - valorDesconto;
+            if (totalFinal < 0) totalFinal = 0;
+
+            const labelInfo = document.getElementById('pdvLabelSubtotal');
+            if(valorDesconto > 0) {
+                labelInfo.innerHTML = `Sub: R$${subtotal.toFixed(2)} | Desc: R$${valorDesconto.toFixed(2)} (${descontoPercent}%)<br><span style="color:#f8fafc; font-size: 13px;">TOTAL FINAL</span>`;
+            } else {
+                labelInfo.innerHTML = `Subtotal Geral`;
+            }
+
+            document.getElementById('pdvTotalVenda').innerText = `R$ ${totalFinal.toFixed(2)}`;
+        }
+
+        window.filtrarProdutosPDV = function (termo) {
+            const select = document.getElementById('pdvSelecaoProduto');
+            if (!select) return;
+            select.innerHTML = '';
+            termo = termo.toLowerCase();
+
+            let matches = [];
+
+            window.produtos.forEach((p, originalIdx) => {
+                if (!termo || p.nome.toLowerCase().includes(termo) || (p.codBarras && p.codBarras.includes(termo))) {
+                    matches.push({ tipo: 'PROD', id: originalIdx, nome: `📦 [P] ${p.nome} (Estoque: ${p.qtd})`, preco: p.venda });
+                }
+            });
+
+            window.servicos.forEach((s, originalIdx) => {
+                if (!termo || s.nome.toLowerCase().includes(termo)) {
+                    matches.push({ tipo: 'SERV', id: originalIdx, nome: `🛠️ [S] ${s.nome}`, preco: s.preco });
+                }
+            });
+
+            if (matches.length === 0) {
+                select.innerHTML = '<option value="">Nenhum item correspondente</option>';
+                return;
+            }
+
+            matches.forEach(m => {
+                select.innerHTML += `<option value="${m.tipo}:${m.id}">${m.nome} - R$ ${m.preco.toFixed(2)}</option>`;
+            });
+        }
+
+        window.verificarBuscaProdutoEnter = function(event) {
+            if (event.key === 'Enter') {
+                adicionarItemAoCarrinho();
+            }
+        }
+
+        window.adicionarItemAoCarrinho = function () {
+            if (!window.estadoCaixa.aberto) {
+                alert("O Caixa está Fechado! Abra o caixa antes de inserir itens na venda.");
+                return;
+            }
+
+            const valSel = document.getElementById('pdvSelecaoProduto').value;
+            const qtd = parseFloat(document.getElementById('pdvQtd').value) || 0;
+
+            if (!valSel || qtd <= 0) { alert("Selecione um produto/serviço e quantidade válida!"); return; }
+
+            const [tipo, id] = valSel.split(':');
+            let itemData = null;
+
+            if (tipo === 'PROD') {
+                const prod = window.produtos[id];
+                if (prod.qtd < qtd) {
+                    if (!confirm(`Atenção: Saldo em estoque insuficiente (${prod.qtd} ${prod.unidade}). Deseja vender em saldo negativo?`)) {
+                        return;
+                    }
+                }
+                itemData = { key: valSel, nome: prod.nome, tipo: 'Produto', preco: prod.venda, qtd: qtd, originalId: id, ncm: prod.ncm, cfop: prod.cfop };
+            } else {
+                const serv = window.servicos[id];
+                itemData = { key: valSel, nome: serv.nome, tipo: 'Serviço', preco: serv.preco, qtd: qtd, originalId: id, ncm: serv.ncm, cfop: serv.cfop };
+            }
+
+            const indexExistente = window.carrinho.findIndex(c => c.key === itemData.key);
+            if (indexExistente !== -1) {
+                window.carrinho[indexExistente].qtd += qtd;
+            } else {
+                window.carrinho.push(itemData);
+            }
+
+            document.getElementById('pdvQtd').value = "1";
+            document.getElementById('pdvCodBarras').value = "";
+            document.getElementById('pdvCodBarras').focus();
+
+            renderizarCarrinho();
+            filtrarProdutosPDV('');
+        }
+
+        window.removerItemCarrinho = function (index) {
+            window.carrinho.splice(index, 1);
+            renderizarCarrinho();
+        }
+
+        function renderizarCarrinho() {
+            const tbody = document.getElementById('carrinhoCorpo');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            let total = 0;
+
+            if (window.carrinho.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:#64748b;">Nenhum produto ou serviço lançado.</td></tr>';
+                atualizarTotalFinalPDV();
+                return;
+            }
+
+            window.carrinho.forEach((c, idx) => {
+                const subtotal = c.preco * c.qtd;
+                total += subtotal;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${c.nome}</strong><br><small style="color:#64748b;">${c.tipo}</small></td>
+                    <td>${c.qtd}</td>
+                    <td>R$ ${c.preco.toFixed(2)}</td>
+                    <td><strong>R$ ${subtotal.toFixed(2)}</strong></td>
+                    <td><button class="btn-excluir-carrinho" onclick="removerItemCarrinho(${idx})">X</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            atualizarTotalFinalPDV();
+        }
+
+        window.emitirNotaFiscalAPI = async function() {
+            if (!window.estadoCaixa.aberto) {
+                alert("O Caixa está Fechado! Não é possível emitir nota.");
+                return;
+            }
+
+            const url = document.getElementById('apiNfeUrl')?.value;
+            const key = document.getElementById('apiNfeKey')?.value;
+
+            if (!url || !key) {
+                alert("Para emitir a Nota Fiscal, por favor, configure a URL e a Key da API no Painel do Administrador (Caixa / Históricos) primeiro.");
+                return;
+            }
+
+            if (window.carrinho.length === 0) {
+                alert("O carrinho está vazio! Adicione itens antes de tentar emitir uma nota fiscal.");
+                return;
+            }
+
+            const payloadNFe = {
+                operacao: "venda",
+                cliente: document.getElementById('pdvSelecaoCliente').value || "Consumidor Final",
+                itens: window.carrinho.map(item => ({
+                    descricao: item.nome,
+                    quantidade: item.qtd,
+                    valor_unitario: item.preco,
+                    ncm: item.ncm || "",
+                    cfop: item.cfop || ""
+                }))
+            };
+
+            alert("Iniciando processo de emissão de Nota Fiscal...\n(O sistema faria o envio para: " + url + ")\n\nOs campos NCM e CFOP já estão preparados no Payload. Lembre-se de ajustar a nomenclatura dos itens no código se sua API exigir chaves diferentes.");
+        }
+
+        window.finalizarVendaPDV = function () {
+            if (!window.estadoCaixa.aberto) {
+                alert("O Caixa está Fechado! Abra o caixa primeiro.");
+                return;
+            }
+            if (window.carrinho.length === 0) { alert("O carrinho está vazio!"); return; }
+
+            const cliente = document.getElementById('pdvSelecaoCliente').value || "Consumidor Final";
+            
+            let f1 = document.getElementById('pdvFormaPagamento').value;
+            let v1 = parseFloat(document.getElementById('valorPag1').value) || 0;
+            let f2 = document.getElementById('pdvFormaPagamento2').value;
+            let v2 = parseFloat(document.getElementById('valorPag2').value) || 0;
+            let usaPag2 = document.getElementById('bloco-pag2').style.display !== 'none';
+            
+            let formaPagamento = "";
+            let parcelasStr = "";
+            let taxaPercent = 0;
+            
+            if (f1 === 'Cartão de Crédito' || (usaPag2 && f2 === 'Cartão de Crédito')) {
+                const parcelas = document.getElementById('pdvParcelas').value;
+                parcelasStr = ` (${parcelas})`;
+                const numeroParcela = parseInt(parcelas) || 1;
+                taxaPercent = parseFloat(window.taxasCredito[numeroParcela - 1]) || 0;
+            } else if (f1 === 'Cartão de Débito' || (usaPag2 && f2 === 'Cartão de Débito')) {
+                taxaPercent = parseFloat(document.getElementById('configTaxaDebito').value) || 0;
+            }
+
+            if (usaPag2 && v2 > 0) {
+                let textF1 = f1 === 'Cartão de Crédito' ? f1 + parcelasStr : f1;
+                let textF2 = f2 === 'Cartão de Crédito' ? f2 + parcelasStr : f2;
+                formaPagamento = `${textF1} (R$ ${v1.toFixed(2)}) e ${textF2} (R$ ${v2.toFixed(2)})`;
+            } else {
+                formaPagamento = f1 + (f1 === 'Cartão de Crédito' ? parcelasStr : '');
+            }
+
+            const agora = new Date();
+            const dataStr = agora.toLocaleString('pt-BR');
+
+            let subtotalItens = 0;
+            let custoVendaTotal = 0;
+            let totalItensContagem = 0;
+            let itensNotaCupom = [];
+
+            window.carrinho.forEach(c => {
+                const sub = c.preco * c.qtd;
+                subtotalItens += sub;
+                totalItensContagem += c.qtd;
+
+                let custoUnit = 0;
+
+                if (c.tipo === 'Produto') {
+                    const prod = window.produtos[c.originalId];
+                    prod.qtd = parseFloat((prod.qtd - c.qtd).toFixed(3));
+                    custoUnit = prod.custo;
+                    registrarLog('estoque', prod.nome, `Saída por Venda: Deduzido ${c.qtd} un. [Histórico Caixa].`);
+                }
+
+                const tipoChaveInsumo = c.tipo === 'Produto' ? `PROD:${c.nome}` : `SERV:${c.nome}`;
+                const insumosVinculados = window.insumos.filter(i => i.vinculo === tipoChaveInsumo);
+                insumosVinculados.forEach(i => {
+                    custoUnit += i.valor;
+                });
+
+                custoVendaTotal += (custoUnit * c.qtd);
+                itensNotaCupom.push({ nome: c.nome, qtd: c.qtd, preco: c.preco, sub: sub, tipo: c.tipo, originalId: c.originalId, key: c.key });
+            });
+
+            const descontoPercent = parseFloat(document.getElementById('pdvDesconto').value) || 0;
+            const valorDesconto = subtotalItens * (descontoPercent / 100);
+            const valorTaxa = subtotalItens * (taxaPercent / 100);
+
+            let totalVendaFinal = subtotalItens - valorDesconto;
+            if (totalVendaFinal < 0) totalVendaFinal = 0;
+
+            const lucroRealLiquido = totalVendaFinal - custoVendaTotal - valorTaxa;
+
+            const novaMovimentacao = {
+                data: dataStr,
+                cliente: cliente,
+                formaPagamento: formaPagamento,
+                total: totalVendaFinal,
+                subtotal: subtotalItens,
+                taxa: valorTaxa,
+                taxaPercent: taxaPercent,
+                desconto: valorDesconto,
+                descontoPercent: descontoPercent,
+                custo: custoVendaTotal,
+                lucro: lucroRealLiquido,
+                qtdItens: totalItensContagem,
+                itens: itensNotaCupom
+            };
+
+            window.historico.unshift(novaMovimentacao);
+            atualizarLocalStorage();
+
+            const areaImpressao = document.getElementById('cupomImpressaoArea');
+            let cupomHtml = `
+                <div style="text-align:center; font-weight:bold; font-size:14px;">*** CLSysPDV ***</div>
+                <div style="text-align:center;">COMPROVANTE DE VENDA</div>
+                <hr style="border-top: 1px dashed black;">
+                <div><b>Data:</b> ${dataStr}</div>
+                <div><b>Cliente:</b> ${cliente}</div>
+                <div><b>Pagamento:</b> ${formaPagamento}</div>
+                <hr style="border-top: 1px dashed black;">
+                <table style="width:100%; font-size:12px; font-family:monospace;">
+                    <thead>
+                        <tr>
+                            <th style="text-align:left; background:none; color:black; padding:2px;">Item</th>
+                            <th style="text-align:center; background:none; color:black; padding:2px;">Qtd</th>
+                            <th style="text-align:right; background:none; color:black; padding:2px;">Sub</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            itensNotaCupom.forEach(it => {
+                cupomHtml += `
+                    <tr>
+                        <td style="padding:2px; border:none;">${it.nome}</td>
+                        <td style="text-align:center; padding:2px; border:none;">${it.qtd}</td>
+                        <td style="text-align:right; padding:2px; border:none;">R$ ${it.sub.toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+
+            cupomHtml += `
+                    </tbody>
+                </table>
+                <hr style="border-top: 1px dashed black;">
+            `;
+
+            if(valorDesconto > 0) {
+                cupomHtml += `
+                    <div style="font-size:12px; text-align:right;">Subtotal: R$ ${subtotalItens.toFixed(2)}</div>
+                    <div style="font-size:12px; text-align:right;">Desconto (${descontoPercent}%): - R$ ${valorDesconto.toFixed(2)}</div>
+                    <hr style="border-top: 1px dashed black;">
+                `;
+            }
+
+            cupomHtml += `
+                <div style="font-size:14px; text-align:right;"><b>TOTAL: R$ ${totalVendaFinal.toFixed(2)}</b></div>
+                <hr style="border-top: 1px dashed black;">
+                <div style="text-align:center; margin-top:10px;">Obrigado pela preferência!</div>
+            `;
+
+            areaImpressao.innerHTML = cupomHtml;
+            window.print();
+
+            window.carrinho = [];
+            document.getElementById('pdvDesconto').value = '';
+            document.getElementById('containerDesconto').style.display = 'none';
+            document.getElementById('iconDesc').innerText = '▼';
+            
+            document.getElementById('pdvFormaPagamento').value = 'Dinheiro';
+            document.getElementById('valorPag1').value = '';
+            document.getElementById('pdvFormaPagamento2').value = 'Dinheiro';
+            document.getElementById('valorPag2').value = '';
+            document.getElementById('bloco-pag2').style.display = 'none';
+            
+            verificarParcelamento();
+            renderizarCarrinho();
+            renderizerTabela();
+            alert("Venda concluída com sucesso!");
+        }
+
+        window.editarVendaFeita = function (index) {
+            if (!confirm("Atenção: A venda será excluída do histórico, os itens voltarão para o estoque e o carrinho do Balcão será carregado para você corrigir. Continuar?")) return;
+
+            const venda = window.historico[index];
+
+            if (venda.itens) {
+                venda.itens.forEach(it => {
+                    if (it.tipo === 'Produto' && it.originalId !== undefined) {
+                        const prod = window.produtos[it.originalId];
+                        if (prod) {
+                            prod.qtd = parseFloat((prod.qtd + it.qtd).toFixed(3));
+                            registrarLog('estoque', prod.nome, `Edição de Venda: Estornado ${it.qtd} un. [Retorno ao Balcão].`);
+                        }
+                    }
+                });
+            }
+
+            window.carrinho = (venda.itens || []).map(it => ({
+                key: it.key || (it.tipo === 'Produto' ? `PROD:${it.originalId}` : `SERV:${it.originalId}`),
+                nome: it.nome,
+                tipo: it.tipo,
+                preco: it.preco,
+                qtd: it.qtd,
+                originalId: it.originalId
+            }));
+
+            const selectCliente = document.getElementById('pdvSelecaoCliente');
+            selectCliente.value = venda.cliente !== "Consumidor Final (Não identificado)" ? venda.cliente : "";
+
+            document.getElementById('bloco-pag2').style.display = 'none';
+            document.getElementById('valorPag1').value = '';
+            document.getElementById('valorPag2').value = '';
+
+            if (venda.formaPagamento.includes('Cartão de Crédito')) {
+                document.getElementById('pdvFormaPagamento').value = 'Cartão de Crédito';
+                verificarParcelamento();
+                const match = venda.formaPagamento.match(/\((.*?)\)/);
+                if (match) document.getElementById('pdvParcelas').value = match[1];
+            } else if (venda.formaPagamento.includes('Cartão de Débito')) {
+                document.getElementById('pdvFormaPagamento').value = 'Cartão de Débito';
+                verificarParcelamento();
+            } else {
+                document.getElementById('pdvFormaPagamento').value = venda.formaPagamento.split(' ')[0];
+                verificarParcelamento();
+            }
+
+            document.getElementById('pdvDesconto').value = venda.descontoPercent || 0;
+            if (venda.descontoPercent > 0) {
+                document.getElementById('containerDesconto').style.display = 'block';
+                document.getElementById('iconDesc').innerText = '▲';
+            }
+
+            window.historico.splice(index, 1);
+            atualizarLocalStorage();
+
+            alternarAba('pdv');
+            renderizarCarrinho();
+        }
+
+        window.calcularDashboardERenderizarHistorico = function () {
+            const dataInicioStr = document.getElementById('filtroDataInicio').value;
+            const dataFimStr = document.getElementById('filtroDataFim').value;
+            
+            let dataInicioObj = dataInicioStr ? new Date(dataInicioStr + "T00:00:00") : null;
+            let dataFimObj = dataFimStr ? new Date(dataFimStr + "T23:59:59") : null;
+
+            let historicoFiltrado = window.historico.map((h, idx) => ({ ...h, originalIdx: idx }));
+            let sangriasFiltradas = window.sangrias.map((s, idx) => ({ ...s, originalIdx: idx }));
+            
+            // FILTRO DE DATAS (INICIO E FIM)
+            if (dataInicioObj || dataFimObj) {
+                historicoFiltrado = historicoFiltrado.filter(h => {
+                    const dataObj = parseDateBr(h.data);
+                    if (dataInicioObj && dataObj < dataInicioObj) return false;
+                    if (dataFimObj && dataObj > dataFimObj) return false;
+                    return true;
+                });
+                
+                sangriasFiltradas = sangriasFiltradas.filter(s => {
+                    const dataObj = parseDateBr(s.data);
+                    if (dataInicioObj && dataObj < dataInicioObj) return false;
+                    if (dataFimObj && dataObj > dataFimObj) return false;
+                    return true;
+                });
+            }
+
+            // FILTRO DE TEXTO
+            const termoBusca = document.getElementById('filtroHistorico')?.value.toLowerCase() || '';
+            if (termoBusca) {
+                historicoFiltrado = historicoFiltrado.filter(h => 
+                    (h.cliente && h.cliente.toLowerCase().includes(termoBusca)) || 
+                    (h.formaPagamento && h.formaPagamento.toLowerCase().includes(termoBusca))
+                );
+            }
+
+            let faturamento = 0;
+            let margemLucro = 0;
+            let totalTaxasPerdidas = 0;
+            let totalDinheiro = 0;
+            let totalPix = 0;
+            let totalDebito = 0;
+            let totalCredito = 0;
+            let totalSangrias = 0;
+
+            sangriasFiltradas.forEach(s => totalSangrias += s.valor);
+
+            historicoFiltrado.forEach(h => {
+                if (h.isLogCaixa) return;
+
+                faturamento += h.total;
+                margemLucro += h.lucro;
+                totalTaxasPerdidas += (h.taxa || 0);
+
+                if (h.formaPagamento.includes('Dinheiro')) totalDinheiro += h.total;
+                if (h.formaPagamento.includes('PIX')) totalPix += h.total;
+                if (h.formaPagamento.includes('Cartão de Débito')) totalDebito += h.total;
+                if (h.formaPagamento.includes('Cartão de Crédito')) totalCredito += h.total;
+            });
+
+            let despesasGeraisInsumosIndependente = 0;
+            window.insumos.forEach(i => {
+                if (!i.vinculo) {
+                    const dataInsObj = parseDateBr(i.data);
+                    if (dataInicioObj && dataInsObj < dataInicioObj) return;
+                    if (dataFimObj && dataInsObj > dataFimObj) return;
+                    
+                    despesasGeraisInsumosIndependente += i.valor;
+                }
+            });
+            margemLucro -= despesasGeraisInsumosIndependente;
+
+            // LÓGICA DO VALOR EM ESTOQUE COM RETROATIVIDADE PRECISA
+            let capEstoque = 0;
+            window.produtos.forEach(p => {
+                capEstoque += (p.custo * p.qtd);
+            });
+
+            if (dataFimObj) {
+                let retroCapital = capEstoque;
+                // Soma de volta os custos dos produtos vendidos DEPOIS da data final do filtro
+                // pois eles ainda estavam no estoque naquele período filtrado.
+                window.historico.forEach(h => {
+                    if (h.isLogCaixa) return;
+                    const dateHistObj = parseDateBr(h.data);
+                    if (dateHistObj > dataFimObj) {
+                        retroCapital += (h.custo || 0);
+                    }
+                });
+                capEstoque = retroCapital;
+            }
+
+            const saldoFundoCaixa = window.estadoCaixa.aberto ? window.estadoCaixa.saldoInicial : 0;
+            const dinheiroReal = totalDinheiro + saldoFundoCaixa - totalSangrias;
+
+            const elFaturamento = document.getElementById('dashFaturamento');
+            if (elFaturamento) elFaturamento.innerText = `R$ ${faturamento.toFixed(2)}`;
+            const elLucro = document.getElementById('dashLucro');
+            if (elLucro) elLucro.innerText = `R$ ${margemLucro.toFixed(2)}`;
+            const elCapital = document.getElementById('dashCapitalParado');
+            if (elCapital) elCapital.innerText = `R$ ${capEstoque.toFixed(2)}`;
+            
+            const elSangriaDash = document.getElementById('dashSangrias');
+            if (elSangriaDash) elSangriaDash.innerText = totalSangrias.toFixed(2);
+
+            const elDin = document.getElementById('cxDinheiro');
+            if (elDin) elDin.innerText = dinheiroReal.toFixed(2);
+            const elPix = document.getElementById('cxPix');
+            if (elPix) elPix.innerText = totalPix.toFixed(2);
+            const elDeb = document.getElementById('cxDebito');
+            if (elDeb) elDeb.innerText = totalDebito.toFixed(2);
+            const elCrd = document.getElementById('cxCredito');
+            if (elCrd) elCrd.innerText = totalCredito.toFixed(2);
+
+            const tbody = document.getElementById('listaHistFinanceiro');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            
+            if (historicoFiltrado.length === 0 && sangriasFiltradas.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Nenhuma movimentação para o período/filtro.</td></tr>';
+                return;
+            }
+
+            sangriasFiltradas.forEach(s => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${s.data}</td>
+                    <td><span class="badge" style="background:#fee2e2; color:#991b1b;">Sangria</span> <small>${s.motivo}</small></td>
+                    <td>-</td>
+                    <td style="color:var(--vermelho-alerta);"><strong>- R$ ${s.valor.toFixed(2)}</strong></td>
+                    <td>
+                        <button class="btn-action btn-edit" onclick="editarSangria(${s.originalIdx})">✏️</button>
+                        <button class="btn-delete" onclick="excluirSangria(${s.originalIdx})">X</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            historicoFiltrado.forEach((h) => {
+                if (h.isLogCaixa) {
+                    const tr = document.createElement('tr');
+                    const isAbertura = h.acao === 'Abertura';
+                    const badgeStyle = isAbertura ? 'background:#dcfce7; color:#065f46;' : 'background:#fee2e2; color:#991b1b;';
+                    const icone = isAbertura ? '🟢' : '🔴';
+                    const valTexto = isAbertura ? `Fundo Inicial: R$ ${h.valorTroco.toFixed(2)}` : '-';
+                    
+                    tr.innerHTML = `
+                        <td>${h.data}</td>
+                        <td><span class="badge" style="${badgeStyle}">${icone} ${h.acao} de Caixa</span></td>
+                        <td>-</td>
+                        <td><strong>${valTexto}</strong></td>
+                        <td>
+                            <button class="btn-delete" onclick="event.stopPropagation(); deletarItemHistoricoIndividual(${h.originalIdx})">X</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                    return;
+                }
+
+                const trP = document.createElement('tr');
+                trP.className = 'linha-clicavel';
+                trP.onclick = () => toggleRowDetalheVenda(h.originalIdx);
+                trP.innerHTML = `
+                    <td>${h.data}</td>
+                    <td><span class="badge badge-entrada">Venda</span> <small style="color:#64748b;">${h.cliente}</small></td>
+                    <td>${h.qtdItens} un.</td>
+                    <td><strong>R$ ${h.total.toFixed(2)}</strong></td>
+                    <td>
+                        <button class="btn-action btn-edit" onclick="event.stopPropagation(); editarVendaFeita(${h.originalIdx})">✏️</button>
+                        <button class="btn-delete" onclick="event.stopPropagation(); deletarItemHistoricoIndividual(${h.originalIdx})">X</button>
+                    </td>
+                `;
+                tbody.appendChild(trP);
+
+                const trChild = document.createElement('tr');
+                trChild.id = `detalhe-venda-row-${h.originalIdx}`;
+                trChild.className = 'detalhe-operacao';
+                trChild.style.display = 'none';
+
+                let listaItensTxt = '';
+                if (h.itens) {
+                    h.itens.forEach(it => {
+                        listaItensTxt += `• ${it.nome} (${it.qtd}x) - R$ ${it.sub.toFixed(2)}<br>`;
+                    });
+                }
+                
+                let addonsTxt = '';
+                if(h.taxa > 0) addonsTxt += `<span style="color:var(--vermelho-alerta);">Taxa Loja Perdida (${h.taxaPercent || 0}%): - R$ ${h.taxa.toFixed(2)}</span><br>`;
+                if(h.desconto > 0) addonsTxt += `Desconto Dado (${h.descontoPercent || 0}%): - R$ ${h.desconto.toFixed(2)}<br>`;
+
+                trChild.innerHTML = `
+                    <td colspan="5">
+                        <div class="detalhe-container">
+                            <div class="detalhe-grid">
+                                <div class="detalhe-bloco"><strong>Itens Comercializados:</strong><br>${listaItensTxt}</div>
+                                <div class="detalhe-bloco"><strong>Forma de Recebimento:</strong><br>💳/💵 ${h.formaPagamento}</div>
+                                <div class="detalhe-bloco"><strong>Análise Financeira:</strong><br>
+                                    Custo Produto/Insumo: R$ ${h.custo.toFixed(2)}<br>
+                                    ${addonsTxt}
+                                    <span style="color:var(--verde-sucesso); font-weight:bold;">Lucro Real Líquido: R$ ${h.lucro.toFixed(2)}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(trChild);
+            });
+        }
+
+        function toggleRowDetalheVenda(idx) {
+            const row = document.getElementById(`detalhe-venda-row-${idx}`);
+            if (row) {
+                row.style.display = row.style.display === 'none' ? 'table-row' : 'none';
+            }
+        }
+
+        window.deletarItemHistoricoIndividual = function (index) {
+            if (confirm("Remover esta movimentação permanentemente?")) {
+                window.historico.splice(index, 1);
+                atualizarLocalStorage();
+                calcularDashboardERenderizarHistorico();
+            }
+        }
+
+        function renderizarLogsTabelas() {
+            const dataInicioStr = document.getElementById('filtroDataInicio')?.value;
+            const dataFimStr = document.getElementById('filtroDataFim')?.value;
+            
+            let dataInicioObj = dataInicioStr ? new Date(dataInicioStr + "T00:00:00") : null;
+            let dataFimObj = dataFimStr ? new Date(dataFimStr + "T23:59:59") : null;
+
+            const filtrarLog = (logArray) => {
+                if(!dataInicioObj && !dataFimObj) return logArray;
+                return logArray.filter(l => {
+                    const dataObj = parseDateBr(l.data);
+                    if(dataInicioObj && dataObj < dataInicioObj) return false;
+                    if(dataFimObj && dataObj > dataFimObj) return false;
+                    return true;
+                });
+            };
+
+            const estFiltrado = filtrarLog(window.logEstoque);
+            const insFiltrado = filtrarLog(window.logInsumos);
+            const cliFiltrado = filtrarLog(window.logCliente);
+
+            const msgVazia = '<tr><td colspan="3" style="text-align:center;">Nenhum log encontrado para o período.</td></tr>';
+
+            const elHEst = document.getElementById('listaHistEstoque');
+            if (elHEst) elHEst.innerHTML = estFiltrado.length ? estFiltrado.map(l => `<tr><td>${l.data}</td><td><strong>${l.item}</strong></td><td><small>${l.msg}</small></td></tr>`).join('') : msgVazia;
+            
+            const elHIns = document.getElementById('listaHistInsumos');
+            if (elHIns) elHIns.innerHTML = insFiltrado.length ? insFiltrado.map(l => `<tr><td>${l.data}</td><td><strong>${l.item}</strong></td><td><small>${l.msg}</small></td></tr>`).join('') : msgVazia;
+            
+            const elHCli = document.getElementById('listaHistCliente');
+            if (elHCli) elHCli.innerHTML = cliFiltrado.length ? cliFiltrado.map(l => `<tr><td>${l.data}</td><td><strong>${l.item}</strong></td><td><small>${l.msg}</small></td></tr>`).join('') : msgVazia;
+        }
+
+        window.alternarCameraScanner = function () {
+            const container = document.getElementById('scanner-container');
+            if (container.style.display === 'block') {
+                container.style.display = 'none';
+                if (window.html5QrcodeScanner) {
+                    window.html5QrcodeScanner.clear();
+                }
+            } else {
+                container.style.display = 'block';
+                window.html5QrcodeScanner = new Html5QrcodeScanner("scanner-container", { fps: 15, qrbox: { width: 250, height: 150 } }, false);
+                window.html5QrcodeScanner.render((decodedText) => {
+                    document.getElementById('pdvCodBarras').value = decodedText;
+                    window.html5QrcodeScanner.clear();
+                    container.style.display = 'none';
+                    filtrarProdutosPDV(decodedText);
+                }, (errorMessage) => {
+                    
+                });
+            }
+        }
+
+        window.limparAbaPDV = function () {
+            if (confirm("Deseja esvaziar todo o carrinho atual do Balcão PDV?")) {
+                window.carrinho = [];
+                document.getElementById('pdvDesconto').value = '';
+                document.getElementById('pdvFormaPagamento').value = 'Dinheiro';
+                document.getElementById('valorPag1').value = '';
+                if(document.getElementById('pdvFormaPagamento2')) {
+                    document.getElementById('pdvFormaPagamento2').value = 'Dinheiro';
+                    document.getElementById('valorPag2').value = '';
+                    document.getElementById('bloco-pag2').style.display = 'none';
+                }
+                verificarParcelamento();
+                renderizarCarrinho();
+            }
+        }
+
+        window.limparAbaServicos = function () {
+            if (confirm("ATENÇÃO: Deseja apagar permanentemente todos os serviços cadastrados?")) {
+                window.servicos = [];
+                atualizarLocalStorage();
+                renderizarServicos();
+                filtrarProdutosPDV('');
+            }
+        }
+
+        window.limparAbaEstoque = function () {
+            if (confirm("ATENÇÃO: Deseja apagar permanentemente todo o estoque e histórico de logs de estoque?")) {
+                window.produtos = [];
+                window.logEstoque = [];
+                atualizarLocalStorage();
+                renderizerTabela();
+                renderizarLogsTabelas();
+                filtrarProdutosPDV('');
+            }
+        }
+
+        window.limparAbaInsumos = function () {
+            if (confirm("ATENÇÃO: Deseja apagar permanentemente todos os insumos lançados e seus respectivos logs?")) {
+                window.insumos = [];
+                window.logInsumos = [];
+                atualizarLocalStorage();
+                renderizarInsumos();
+                renderizarLogsTabelas();
+            }
+        }
+
+        window.limparAbaClientes = function () {
+            if (confirm("ATENÇÃO: Deseja apagar permanentemente todos os clientes cadastrados e seus logs?")) {
+                window.clientes = [];
+                window.logCliente = [];
+                atualizarLocalStorage();
+                renderizarClientes();
+                renderizarLogsTabelas();
+                atualizarSelectClientesPDV();
+            }
+        }
+
+        window.limparAbaHistoricos = function () {
+            if (confirm("ATENÇÃO CRÍTICA: Deseja zerar completamente o caixa, faturamento e todos os logs do sistema?")) {
+                window.historico = [];
+                window.logEstoque = [];
+                window.logInsumos = [];
+                window.logCliente = [];
+                window.sangrias = [];
+                window.estadoCaixa = { aberto: false, saldoInicial: 0, dataAbertura: null };
+                atualizarLocalStorage();
+                atualizarInterfaceCaixa();
+                calcularDashboardERenderizarHistorico();
+                renderizarLogsTabelas();
+            }
+        }
+
+        window.exportarBackupJSON = function () {
+            const dadosBackup = {
+                produtos: window.produtos,
+                servicos: window.servicos,
+                clientes: window.clientes,
+                insumos: window.insumos,
+                historico: window.historico,
+                logEstoque: window.logEstoque,
+                logInsumos: window.logInsumos,
+                logCliente: window.logCliente,
+                taxasCredito: window.taxasCredito,
+                permissoesOperador: window.permissoesOperador,
+                estadoCaixa: window.estadoCaixa,
+                sangrias: window.sangrias
+            };
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dadosBackup));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `clsyspdv_backup_${new Date().toISOString().slice(0,10)}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        window.importarBackupJSON = function (event) {
+            const arquivo = event.target.files[0];
+            if (!arquivo) return;
+            const leitor = new FileReader();
+            leitor.onload = function (e) {
+                try {
+                    const dados = JSON.parse(e.target.result);
+                    if (dados.produtos) window.produtos = dados.produtos;
+                    if (dados.servicos) window.servicos = dados.servicos;
+                    if (dados.clientes) window.clientes = dados.clientes;
+                    if (dados.insumos) window.insumos = dados.insumos;
+                    if (dados.historico) window.historico = dados.historico;
+                    if (dados.logEstoque) window.logEstoque = dados.logEstoque;
+                    if (dados.logInsumos) window.logInsumos = dados.logInsumos;
+                    if (dados.logCliente) window.logCliente = dados.logCliente;
+                    if (dados.estadoCaixa) window.estadoCaixa = dados.estadoCaixa;
+                    if (dados.sangrias) window.sangrias = dados.sangrias;
+                    if (dados.taxasCredito) {
+                        window.taxasCredito = dados.taxasCredito;
+                        localStorage.setItem('cl_taxas_credito', JSON.stringify(window.taxasCredito));
+                    }
+                    if (dados.permissoesOperador) {
+                        window.permissoesOperador = dados.permissoesOperador;
+                        localStorage.setItem('cl_permissoes_operador', JSON.stringify(window.permissoesOperador));
+                    }
+                    
+                    atualizarLocalStorage();
+                    
+                    renderizerTabela();
+                    renderizarServicos();
+                    renderizarInsumos();
+                    renderizarClientes();
+                    renderizarLogsTabelas();
+                    atualizarSelectClientesPDV();
+                    atualizarInterfaceCaixa();
+                    calcularDashboardERenderizarHistorico();
+                    filtrarProdutosPDV('');
+                    renderizarGradeTaxas();
+                    carregarChecksPermissoes();
+                    aplicarPermissoesTelas();
+                    
+                    alert("Backup restaurado perfeitamente via JSON com sucesso!");
+                } catch (err) {
+                    alert("Arquivo de backup inválido ou corrompido!");
+                }
+            };
+            leitor.readAsText(arquivo);
+            event.target.value = '';
+        }
+
+        window.exportarBackupExcelFormatado = function () {
+            if (typeof XLSX === 'undefined') {
+                alert("Biblioteca Excel ainda não carregada, tente novamente em instantes.");
+                return;
+            }
+
+            const wb = XLSX.utils.book_new();
+
+            const dadosEstoque = window.produtos.map(p => ({
+                "Produto": p.nome,
+                "Código de Barras": p.codBarras || "-",
+                "NCM": p.ncm || "-",
+                "CFOP": p.cfop || "-",
+                "Quantidade": p.qtd,
+                "Unidade": p.unidade,
+                "Preço Custo (R$)": p.custo,
+                "Preço Venda (R$)": p.venda,
+                "Data Validade": p.validade ? p.validade.split('-').reverse().join('/') : "-"
+            }));
+            const wsEstoque = XLSX.utils.json_to_sheet(dadosEstoque);
+            formatarFolhaExcel(wsEstoque);
+            XLSX.utils.book_append_sheet(wb, wsEstoque, "Estoque");
+
+            const dadosServicos = window.servicos.map(s => ({
+                "Nome do Serviço": s.nome,
+                "NCM/Cód": s.ncm || "-",
+                "CFOP": s.cfop || "-",
+                "Preço Cobrado (R$)": s.preco
+            }));
+            const wsServicos = XLSX.utils.json_to_sheet(dadosServicos);
+            formatarFolhaExcel(wsServicos);
+            XLSX.utils.book_append_sheet(wb, wsServicos, "Serviços");
+
+            const dadosClientes = window.clientes.map(c => ({
+                "Nome do Cliente": c.nome,
+                "Telefone / Contato": c.telf || "-",
+                "Observações Gerais": c.obs || "-"
+            }));
+            const wsClientes = XLSX.utils.json_to_sheet(dadosClientes);
+            formatarFolhaExcel(wsClientes);
+            XLSX.utils.book_append_sheet(wb, wsClientes, "Clientes");
+
+            const dadosInsumos = window.insumos.map(i => ({
+                "Data Registro": i.data,
+                "Descrição do Gasto": i.desc,
+                "Vínculo Item": i.vinculo ? i.vinculo.split(':')[1] : "Operação Geral",
+                "Valor Unitário (R$)": i.valor
+            }));
+            const wsInsumos = XLSX.utils.json_to_sheet(dadosInsumos);
+            formatarFolhaExcel(wsInsumos);
+            XLSX.utils.book_append_sheet(wb, wsInsumos, "Gastos e Insumos");
+
+            const dadosVendas = window.historico.map(v => ({
+                "Data/Hora": v.data,
+                "Cliente": v.cliente,
+                "Forma Pagamento": v.formaPagamento,
+                "Total Venda (R$)": v.total,
+                "Custo Total (R$)": v.custo,
+                "Lucro Líquido (R$)": v.lucro,
+                "Qtd Itens": v.qtdItens
+            }));
+            const wsVendas = XLSX.utils.json_to_sheet(dadosVendas);
+            formatarFolhaExcel(wsVendas);
+            XLSX.utils.book_append_sheet(wb, wsVendas, "Histórico Vendas");
+
+            XLSX.writeFile(wb, `clsyspdv_relatorio_formatado_${new Date().toISOString().slice(0,10)}.xlsx`);
+        }
+
+        function formatarFolhaExcel(ws) {
+            if (!ws || !ws['!ref']) return;
+            
+            const range = XLSX.utils.decode_range(ws['!ref']);
+            const colWidths = [];
+
+            for (let C = range.s.c; C <= range.e.c; ++C) {
+                let maxLen = 12; 
+                for (let R = range.s.r; R <= range.e.r; ++R) {
+                    const cellRef = XLSX.utils.encode_cell({ r: R, c: C });
+                    const cell = ws[cellRef];
+                    if (cell && cell.v) {
+                        const txtLen = cell.v.toString().length;
+                        if (txtLen > maxLen) maxLen = txtLen;
+                    }
+
+                    if (cell) {
+                        if (!cell.s) cell.s = {};
+                        cell.s.alignment = {
+                            vertical: "center",
+                            horizontal: "center",
+                            wrapText: true
+                        };
+                    }
+                }
+                colWidths.push({ wch: maxLen + 4 }); 
+            }
+            ws['!cols'] = colWidths;
+        }
+
+        window.addEventListener('online', () => {
+            const status = document.getElementById('statusConexao');
+            if (status) {
+                status.innerHTML = "● Sincronizado (Local/Nuvem)";
+                status.style.color = "var(--verde-sucesso)";
+            }
+        });
+        window.addEventListener('offline', () => {
+            const status = document.getElementById('statusConexao');
+            if (status) {
+                status.innerHTML = "● Modo Offline Ativo";
+                status.style.color = "var(--laranja-aviso)";
+            }
+        });
+
+        // INICIALIZAÇÃO DO SISTEMA
+        verificarSessaoAtiva();
+        renderizerTabela();
+        renderizarServicos();
+        renderizarInsumos();
+        renderizarClientes();
+        renderizarLogsTabelas();
+        atualizarSelectClientesPDV();
+        atualizarInterfaceCaixa();
+        filtrarProdutosPDV('');
+        renderizarGradeTaxas();
+        carregarChecksPermissoes();
+    </script>
+</body>
+
+</html>
